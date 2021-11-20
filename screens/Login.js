@@ -3,6 +3,10 @@ import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import CadastroPessoa from './CadastroPessoa';
 
+import openDB from "../db";
+
+const db = openDB();
+
 export default function Login({ navigation }) {
     return (
       <View style={styles.container}>
