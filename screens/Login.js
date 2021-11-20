@@ -1,37 +1,42 @@
 import * as React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import CadastroPessoa from './CadastroPessoa';
 
-export default function Home({ navigation }) {
+export default function Login({ navigation }) {
     return (
       <View style={styles.container}>
         <TextInput
             mode="outlined"
             autoCapitalize="none"
-            label="E-mail"
+            label="User"
             textAlign="center"
-            activeOutlineColor="orange"
+            activeOutlineColor="#00BFFF"
             style={styles.input}
         />
 
         <TextInput
             mode="outlined"
-            label="Senha"
+            label="Passwoerd"
             autoCapitalize="none"
             secureTextEntry
-            activeOutlineColor="orange"
+            activeOutlineColor="#00BFFF"
             style={styles.input}
         />
+        <View style={styles.botoes}>
         <Button
-          style={styles.result}
-          icon="arrow-right"
+          style={styles.but}
           mode="contained"
-        >
-          Logar
-        </Button>
+        >Login</Button>
         <Button
-          style={styles.result}
-          icon="arrow-right"
+          style={styles.but}
+          mode="contained"
+          onPress={() => navigation.navigate("CadastroPessoa")}
+        >Sing in</Button>
+        </View>
+        
+        <Button
+          style={styles.button}
           mode="text"
         >
           Esqueci a senha
@@ -45,23 +50,26 @@ export default function Home({ navigation }) {
       flex: 1,
       backgroundColor: "#fff",
       justifyContent: "center",
-  
+      padding: 10
     },
     input: {
       height: 50,
       fontSize: 20,
       margin: 5
     },
-    button: {
+    botoes:{
       marginTop: 10,
-      width: "75%",
-      height: 40,
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+    },
+    button: {
       alignSelf: "center",
       justifyContent: "center",
+      color: "#00BFFF"
     },
-    result: {
-      marginTop: 10,
-      alignItems: "center",
+    but:{
+      backgroundColor: "#00BFFF",
+      borderRadius: 50
     }
   });
   
