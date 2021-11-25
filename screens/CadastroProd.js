@@ -5,40 +5,52 @@ import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 
+import openDB from "../db";
 
-export default function CadastroProduto({ navigation}) {
+const db = openDB();
 
-    const [image, setImage] = useState(null);
-  
-    useEffect(() => {
-      (async () => {
-        if (Platform.OS !== 'web') {
-          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-          }
+const EMPTY_PRODUT = {
+  ID_PESSOA: "",
+  NOME: "",
+  QUANT: 0,
+  PRECO_ANT: 0.0,
+  PRECO_ATU: 0.0,
+  OBS: "",
+  IMG_PROD: "",
+};
+
+function FormCadastro({onSaveCadastro}){
+  const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
+  const [image, setImage] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
         }
-      })();
-    }, []);
-  
-    const pickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.cancelled) {
-        setImage(result.uri);
       }
-    };
-  
-  
-    return (
-    <View style={styles.principal}>
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
+
+  return (
+    <View style={styles.principal}>    
       <View style={styles.secundaria}>
         <Image 
             style={styles.stretch}
@@ -60,6 +72,7 @@ export default function CadastroProduto({ navigation}) {
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="nome"
+                onChangeText={nome => setProdut({ ...produtos, nome})}
             /></LinearGradient>
             <LinearGradient 
             colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -75,6 +88,7 @@ export default function CadastroProduto({ navigation}) {
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="qtd"
+                onChangeText={quant => setProdut({ ...produtos, quant})}
             /></LinearGradient>
             <View style={styles.containerInput}>
                 <LinearGradient 
@@ -91,6 +105,7 @@ export default function CadastroProduto({ navigation}) {
                     underlineColor="#fff"
                     style={styles.formInput2}
                     label="preço an."
+                    onChangeText={preco_ant => setProdut({ ...produtos, preco_ant})}
                 /></LinearGradient>
                 <LinearGradient 
                 colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -106,6 +121,7 @@ export default function CadastroProduto({ navigation}) {
                     underlineColor="#fff"
                     style={styles.formInput2}
                     label="preço at."
+                    onChangeText={preco_atu => setProdut({ ...produtos, preco_atu})}
                 /></LinearGradient>
             </View>
             <LinearGradient 
@@ -122,6 +138,7 @@ export default function CadastroProduto({ navigation}) {
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="inf. adicionais"
+                onChangeText={obs => setProdut({ ...produtos, obs})}
             /></LinearGradient>
             <View style={styles.containerImage}>
                 {image && <Image source={{ uri: image }} style={{ width: 70, height: 70 }} />}
@@ -142,6 +159,53 @@ export default function CadastroProduto({ navigation}) {
                 <Button title="cadastrar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
+    </View>
+    );
+}
+
+
+export default function CadastroProduto({ navigation}) {
+    const [produtos, setProdt] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    function saveProduto(produto) {
+      db.transaction(tx => {
+        tx.executeSql("INSERT INTO PRODUTOS (ID_PESSOA, NOME, QUANT, PRECO_ANT, PRECO_ATU, OBS, IMG_PROD) VALUES(?, ?, ?, ?, ?, ?, ?)", [produto.id_pessoa, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod], (_, rs) => {
+          console.log(`Novo usuario salvo: ${rs.insertId}`);
+          recuperaProdutos();
+        });
+      });
+    }
+  
+    function removeProduto(id) {
+      db.transaction(tx => {
+        tx.executeSql("DELETE FROM PRODUTOS WHERE ID_PRODUT = ?", [id], (_, rs) => {
+          recuperaProdutos();
+        });
+      });
+    }
+  
+    function recuperaProdutos() {
+      db.transaction(tx => {
+        tx.executeSql("SELECT * FROM PRODUTOS ORDER BY NOME ASC", [], (_, rs) => {
+          setProdt(rs.rows._array);
+          setLoading(false);
+        });
+      });
+    }
+  
+  
+    useEffect(() => {
+      recuperaProdutos();
+    }, []);
+  
+    
+  
+  
+    return (
+    <View style={styles.principal}>  
+      <FormCadastro onSaveCadastro={saveProduto} />  
+      
     </View>
     );
     

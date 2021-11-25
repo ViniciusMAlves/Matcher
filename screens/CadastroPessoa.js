@@ -5,9 +5,20 @@ import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 
-export default function CadastroPessoa({ navigation}) {
+import openDB from "../db";
 
-    const [image2, setImage2] = useState(null);
+const db = openDB();
+
+const EMPTY_PESSOA = {
+  USER: "",
+  EMAIL: "",
+  PASSWORD: "",
+  IMG_PESSOA: "",
+};
+
+function FormCadastro({onSaveCadastro}){
+  const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
+  const [image2, setImage2] = useState(null);
   
     useEffect(() => {
       (async () => {
@@ -58,6 +69,7 @@ export default function CadastroPessoa({ navigation}) {
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="user"
+                onChangeText={user => setPessoa({ ...pessoa, user})}
             /></LinearGradient>
             <LinearGradient 
             colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -74,6 +86,7 @@ export default function CadastroPessoa({ navigation}) {
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="email"
+                onChangeText={email => setPessoa({ ...pessoa, email})}
             /></LinearGradient>
             <LinearGradient 
             colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -105,7 +118,8 @@ export default function CadastroPessoa({ navigation}) {
                 underlineColor="#fff"
                 secureTextEntry
                 style={styles.formInput}
-                label="comfirm password"
+                label="comfirm password"                
+                onChangeText={password => setPessoa({ ...pessoa, password})}
             /></LinearGradient>
             <View style={styles.containerImage}>
                 {image2 && <Image source={{ uri: image2 }} style={{ width: 70, height: 70 }} />}
@@ -128,8 +142,52 @@ export default function CadastroPessoa({ navigation}) {
       </View>
     </View>
     );
-    
+}
+
+export default function CadastroPessoa({ navigation}) {
+  const [pessoas, setPessoa] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    function savePessoa(pessoa) {
+      db.transaction(tx => {
+        tx.executeSql("INSERT INTO PESSOAS (USER, EMAIL, PASSWORD, IMG_PESSOA) VALUES(?, ?, ?, ?)", [pessoa.user, pessoa.email, pessoa.password, pessoa.img_pessoa], (_, rs) => {
+          console.log(`Novo usuario salvo: ${rs.insertId}`);
+          recuperaPessoa();
+        });
+      });
     }
+  
+    function removePessoa(id) {
+      db.transaction(tx => {
+        tx.executeSql("DELETE FROM PESSOAS WHERE ID_PESSOA = ?", [id], (_, rs) => {
+          recuperaPessoa();
+        });
+      });
+    }
+  
+    function recuperaPessoa() {
+      db.transaction(tx => {
+        tx.executeSql("SELECT * FROM PESSOAS ORDER BY NOME ASC", [], (_, rs) => {
+          setPessoa(rs.rows._array);
+          setLoading(false);
+        });
+      });
+    }
+  
+  
+    useEffect(() => {
+      recuperaPessoa();
+    }, []);
+  
+    
+  
+  
+    return (
+    <View style={styles.principal}>  
+      <FormCadastro onSaveCadastro={savePessoa} />        
+    </View>
+    );    
+}
   
   const styles = StyleSheet.create({
 
