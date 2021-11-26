@@ -4,7 +4,20 @@ import { LinearGradient } from "expo-linear-gradient";
 import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
 
+import openDB from "../db";
+
+const db = openDB();
+
 export default function Login({ navigation}) {
+    const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
+
+    function verificaLogin(user, pass) {
+        db.transaction(tx => {
+          tx.executeSql("SELECT FIRST 1 1 FROM PESSOAS WHERE USER = ? PASSWORD = ?", [user, pass], (_, rs) => {
+            setPessoa(rs.rows._array);
+          });
+        });
+      }
   
     return (
     <View style={styles.principal}>

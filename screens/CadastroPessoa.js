@@ -145,7 +145,6 @@ function FormCadastro({onSaveCadastro}){
 }
 
 export default function CadastroPessoa({ navigation}) {
-  const [pessoas, setPessoa] = useState([]);
     const [loading, setLoading] = useState(true);
 
     function savePessoa(pessoa) {
@@ -168,6 +167,15 @@ export default function CadastroPessoa({ navigation}) {
     function recuperaPessoa() {
       db.transaction(tx => {
         tx.executeSql("SELECT * FROM PESSOAS ORDER BY NOME ASC", [], (_, rs) => {
+          setPessoa(rs.rows._array);
+          setLoading(false);
+        });
+      });
+    }
+
+    function buscaPessoa(id) {
+      db.transaction(tx => {
+        tx.executeSql("SELECT * FROM PESSOAS WHERE ID_PESSOA = ?", [id], (_, rs) => {
           setPessoa(rs.rows._array);
           setLoading(false);
         });

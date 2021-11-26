@@ -5,10 +5,32 @@ import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 
+import openDB from "../db";
+
+const db = openDB();
+
+const EMPTY_PRODUT = {
+  ID_PESSOA: "",
+  NOME: "",
+  QUANT: 0,
+  PRECO_ANT: 0.0,
+  PRECO_ATU: 0.0,
+  OBS: "",
+  IMG_PROD: "",
+};
 
 export default function Produto({ navigation}) {
-
+    const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
     const [image, setImage] = useState(null);
+
+    function recuperaProdutos() {
+      db.transaction(tx => {
+        tx.executeSql("SELECT * FROM PRODUTOS ORDER BY NOME ASC", [], (_, rs) => {
+          setProdut(rs.rows._array);
+          setLoading(false);
+        });
+      });
+    }
   
     useEffect(() => {
       (async () => {

@@ -165,7 +165,7 @@ function FormCadastro({onSaveCadastro}){
 
 
 export default function CadastroProduto({ navigation}) {
-    const [produtos, setProdt] = useState([]);
+    const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
     const [loading, setLoading] = useState(true);
 
     function saveProduto(produto) {
@@ -188,7 +188,16 @@ export default function CadastroProduto({ navigation}) {
     function recuperaProdutos() {
       db.transaction(tx => {
         tx.executeSql("SELECT * FROM PRODUTOS ORDER BY NOME ASC", [], (_, rs) => {
-          setProdt(rs.rows._array);
+          setProdut(rs.rows._array);
+          setLoading(false);
+        });
+      });
+    }
+
+    function buscaProdutos(id) {
+      db.transaction(tx => {
+        tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PRODUT = ?", [id], (_, rs) => {
+          setProdut(rs.rows._array);
           setLoading(false);
         });
       });

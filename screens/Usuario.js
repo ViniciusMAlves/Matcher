@@ -4,9 +4,29 @@ import {Button} from "react-native-elements";
 import {Text} from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 
-export default function Usuario({ navigation}) {
+import openDB from "../db";
 
+const db = openDB();
+
+const EMPTY_PESSOA = {
+  USER: "",
+  EMAIL: "",
+  PASSWORD: "",
+  IMG_PESSOA: "",
+};
+
+export default function Usuario({ navigation}) {
+    const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
     const [image2, setImage2] = useState(null);
+
+    function recuperaPessoa() {
+      db.transaction(tx => {
+        tx.executeSql("SELECT * FROM PESSOAS ORDER BY NOME ASC", [], (_, rs) => {
+          setPessoa(rs.rows._array);
+          setLoading(false);
+        });
+      });
+    }
   
     useEffect(() => {
       (async () => {
