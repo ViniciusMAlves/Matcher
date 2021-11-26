@@ -87,6 +87,7 @@ function FormCadastro({onSaveCadastro}){
                 style={styles.formInput}
                 label="email"
                 onChangeText={email => setPessoa({ ...pessoa, email})}
+                keyboardType="email-address"
             /></LinearGradient>
             <LinearGradient 
             colors={['#FFF', "rgba(62, 170, 204, 1)"]}

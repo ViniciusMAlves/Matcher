@@ -89,6 +89,7 @@ function FormCadastro({onSaveCadastro}){
                 style={styles.formInput}
                 label="qtd"
                 onChangeText={quant => setProdut({ ...produtos, quant})}
+                keyboardType="numeric"
             /></LinearGradient>
             <View style={styles.containerInput}>
                 <LinearGradient 
@@ -106,6 +107,7 @@ function FormCadastro({onSaveCadastro}){
                     style={styles.formInput2}
                     label="preço an."
                     onChangeText={preco_ant => setProdut({ ...produtos, preco_ant})}
+                    keyboardType="decimal-pad"
                 /></LinearGradient>
                 <LinearGradient 
                 colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -122,6 +124,7 @@ function FormCadastro({onSaveCadastro}){
                     style={styles.formInput2}
                     label="preço at."
                     onChangeText={preco_atu => setProdut({ ...produtos, preco_atu})}
+                    keyboardType="decimal-pad"
                 /></LinearGradient>
             </View>
             <LinearGradient 

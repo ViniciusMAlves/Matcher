@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { StyleSheet, View,Image} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Button} from "react-native-elements";
@@ -8,6 +8,10 @@ import openDB from "../db";
 
 const db = openDB();
 
+const EMPTY_PESSOA = {
+    USER: "",
+    PASSWORD: "",
+  };
 export default function Login({ navigation}) {
     const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
 
