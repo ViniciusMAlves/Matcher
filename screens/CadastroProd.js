@@ -46,6 +46,7 @@ function FormCadastro({onSaveCadastro}){
 
     if (!result.cancelled) {
       setImage(result.uri);
+      img => setProdut({ ...produtos, img});
     }
   };
 
@@ -159,7 +160,7 @@ function FormCadastro({onSaveCadastro}){
                 buttonStyle={styles.formButtonImage}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="cadastrar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
+                <Button title="cadastrar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => onSaveCadastro(produtos)} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
     </View>
@@ -167,14 +168,14 @@ function FormCadastro({onSaveCadastro}){
 }
 
 
-export default function CadastroProduto({ navigation}) {
-    const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
+export default function CadastroProduto({route}) {
+    const { userId } = route.params;
     const [loading, setLoading] = useState(true);
 
     function saveProduto(produto) {
       db.transaction(tx => {
-        tx.executeSql("INSERT INTO PRODUTOS (ID_PESSOA, NOME, QUANT, PRECO_ANT, PRECO_ATU, OBS, IMG_PROD) VALUES(?, ?, ?, ?, ?, ?, ?)", [produto.id_pessoa, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod], (_, rs) => {
-          console.log(`Novo usuario salvo: ${rs.insertId}`);
+        tx.executeSql("INSERT INTO PRODUTOS (ID_PESSOA, NOME, QUANT, PRECO_ANT, PRECO_ATU, OBS, IMG_PROD) VALUES(?, ?, ?, ?, ?, ?, ?)", [userId, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod], (_, rs) => {
+          console.log(`Novo produto salvo: ${rs.insertId}`);
           recuperaProdutos();
         });
       });
@@ -216,8 +217,7 @@ export default function CadastroProduto({ navigation}) {
   
     return (
     <View style={styles.principal}>  
-      <FormCadastro onSaveCadastro={saveProduto} />  
-      
+      <FormCadastro onSaveCadastro={saveProduto} />        
     </View>
     );
     

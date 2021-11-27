@@ -4,9 +4,23 @@ import {Button} from "react-native-elements";
 import {Text} from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 
-export default function ListaProduto({ navigation}) {
+import openDB from "../db";
+
+const db = openDB();
+
+export default function ListaProduto({ route, navigation}) {
+    const { userId } = route.params;
 
     const [image2, setImage2] = useState(null);
+
+    function recuperaProdutos() {
+      db.transaction(tx => {
+        tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PESSOA = ? ORDER BY NOME ASC", [userId], (_, rs) => {
+          setProdut(rs.rows._array);
+          setLoading(false);
+        });
+      });
+    }
   
     useEffect(() => {
       (async () => {

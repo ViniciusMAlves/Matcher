@@ -15,13 +15,19 @@ const EMPTY_PESSOA = {
 export default function Login({ navigation}) {
     const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
 
-    function verificaLogin(user, pass) {
+    function verificaLogin(pessoa) {
         db.transaction(tx => {
-          tx.executeSql("SELECT FIRST 1 1 FROM PESSOAS WHERE USER = ? PASSWORD = ?", [user, pass], (_, rs) => {
+          tx.executeSql("SELECT FIRST 1 1 FROM PESSOAS WHERE USER = ? PASSWORD = ?", [pessoa.user, pessoa.password], (_, rs) => {
+            console.log(`opa`);
+            mudaTela;
             setPessoa(rs.rows._array);
           });
         });
       }
+
+    function mudaTela(id){
+      navigation.navigate("CadastroProd", {userId: 1});
+    }
   
     return (
     <View style={styles.principal}>
@@ -46,6 +52,7 @@ export default function Login({ navigation}) {
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="user"
+                onChangeText={user => setPessoa({ ...pessoa, user})}
             /></LinearGradient>
             <LinearGradient 
                 colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -62,9 +69,10 @@ export default function Login({ navigation}) {
                 secureTextEntry
                 style={styles.formInput}
                 label="password"
+                onChangeText={password => setPessoa({ ...pessoa, password})}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="login" titleStyle={{ color: 'white', fontSize:19 }}  onPress={() => navigation.navigate("CadastroProd")} buttonStyle={styles.buttonLogin}/>
+                <Button title="login" titleStyle={{ color: 'white', fontSize:19 }}  onPress={() => mudaTela()} buttonStyle={styles.buttonLogin}/>
                 <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("CadastroPessoa")} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>

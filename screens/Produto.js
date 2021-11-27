@@ -9,23 +9,15 @@ import openDB from "../db";
 
 const db = openDB();
 
-const EMPTY_PRODUT = {
-  ID_PESSOA: "",
-  NOME: "",
-  QUANT: 0,
-  PRECO_ANT: 0.0,
-  PRECO_ATU: 0.0,
-  OBS: "",
-  IMG_PROD: "",
-};
 
-export default function Produto({ navigation}) {
+export default function Produto({ route, navigation}) {
+    const { ProdId } = route.params;
     const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
     const [image, setImage] = useState(null);
 
-    function recuperaProdutos() {
+    function recuperaProduto() {
       db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PRODUTOS ORDER BY NOME ASC", [], (_, rs) => {
+        tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PRODUT = ? ", [ProdId], (_, rs) => {
           setProdut(rs.rows._array);
           setLoading(false);
         });

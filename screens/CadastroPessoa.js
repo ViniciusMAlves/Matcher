@@ -16,7 +16,7 @@ const EMPTY_PESSOA = {
   IMG_PESSOA: "",
 };
 
-function FormCadastro({onSaveCadastro}){
+function FormCadastro({onSaveCadastro, navigation}){
   const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
   const [image2, setImage2] = useState(null);
   
@@ -138,7 +138,7 @@ function FormCadastro({onSaveCadastro}){
                 buttonStyle={styles.formButtonImage}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
+                <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => {onSaveCadastro(pessoa); navigation.navigate("Login")}} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
     </View>
