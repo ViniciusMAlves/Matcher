@@ -10,10 +10,14 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@mdi/font": "^6.5.95",
+    "@mdi/js": "^6.5.95",
+    "@mdi/react": "^1.5.0",
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "expo": "~43.0.2",
+    "expo-image-picker": "~11.0.3",
     "expo-linear-gradient": "~10.0.3",
     "expo-sqlite": "^10.0.3",
     "expo-status-bar": "~1.1.0",
@@ -25,8 +29,7 @@
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
     "react-native-unimodules": "^0.14.10",
-    "react-native-web": "0.17.1",
-    "expo-image-picker": "~11.0.3"
+    "react-native-web": "0.17.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

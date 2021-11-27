@@ -10,7 +10,7 @@ import openDB from "../db";
 const db = openDB();
 
 const EMPTY_PRODUT = {
-  ID_PESSOA: "",
+  ID_PESSOA: 0,
   NOME: "",
   QUANT: 0,
   PRECO_ANT: 0.0,

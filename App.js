@@ -11,6 +11,7 @@ import CriaCatalogoScreen from "./screens/CriaCatalogo";
 import ListaProdScreen from "./screens/ListaProd";
 import ProdutoScreen from "./screens/Produto";
 import UsuarioScreen from "./screens/Usuario";
+import { Header } from "react-native/Libraries/NewAppScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,7 +24,7 @@ function App() {
         <Stack.Screen name="CadastroProd" component={CadastroProdScreen} options={{ title: "Cadastro Prod." }} />
         <Stack.Screen name="Usuario" component={UsuarioScreen} options={{ title: "Usuário" }} />
         <Stack.Screen name="Produto" component={ProdutoScreen} options={{ title: "Produto" }} />
-        <Stack.Screen name="ListaProduto" component={ListaProdScreen} options={{ title: "Lista de Produtos" }} />
+        <Stack.Screen name="ListaProduto" component={ListaProdScreen} options={{ headerShown: false, title: "Lista de Produtos", }} />
         <Stack.Screen name="CriarCatalogo" component={CriaCatalogoScreen} options={{ title: "Criar Catálogo" }} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -8,6 +8,13 @@ import openDB from "../db";
 
 const db = openDB();
 
+const EMPTY_PESSOA = {
+  USER: "",
+  EMAIL: "",
+  PASSWORD: "",
+  IMG_PESSOA: "",
+};
+
 export default function Usuario({ route, navigation}) {    
     const { userId } = route.params;
     const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
@@ -62,10 +69,10 @@ export default function Usuario({ route, navigation}) {
             </View>
             <Text>Usuario</Text>
             <View style={styles.containerButton}>
-                <Button title="produtos" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
+                <Button title="produtos" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Produto", { ProdId:1 })} buttonStyle={styles.buttonLogin}/>
             </View>
             <View style={styles.containerButton}>
-                <Button title="cadastrar prod." titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
+                <Button title="cadastrar prod." titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("CadastroProd", { userId:1 })} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
     </View>

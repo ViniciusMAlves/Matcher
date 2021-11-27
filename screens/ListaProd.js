@@ -1,72 +1,121 @@
 import React, {useState, useEffect} from "react";
 import { StyleSheet, View,Image, ScrollView} from "react-native";
 import {Button} from "react-native-elements";
-import {Text} from "react-native-paper";
+import { Provider as PaperProvider, Text, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
-
+import { Appbar } from 'react-native-paper';
 import openDB from "../db";
 
 const db = openDB();
 
+const EMPTY_PRODUT = {  
+  ID_PRODUT: 0,
+  ID_PESSOA: 0,
+  NOME: "",
+  QUANT: 0,
+  PRECO_ANT: 0.0,
+  PRECO_ATU: 0.0,
+  OBS: "",
+  IMG_PROD: "",
+};
+
+function Produt(prod){
+  const [image2, setImage2] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage2(result.uri);
+    }
+  };
+
+  return (
+  <View style={styles.principal}>
+    <View style={styles.secundaria}>
+      <Image 
+          style={styles.stretch}
+          source={require('../img/logo.png')}
+      />
+    </View>
+    <View style={styles.form}>
+          <ScrollView style={styles.containerScrollView}>
+          </ScrollView>
+          <View style={styles.containerButton}>
+                  <Button title="criar catalogo" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
+          </View>
+    </View>
+  </View>
+  );
+}
+
 export default function ListaProduto({ route, navigation}) {
     const { userId } = route.params;
-
-    const [image2, setImage2] = useState(null);
+    const [produtos, setProdut] = useState(null);
 
     function recuperaProdutos() {
       db.transaction(tx => {
         tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PESSOA = ? ORDER BY NOME ASC", [userId], (_, rs) => {
           setProdut(rs.rows._array);
-          setLoading(false);
         });
       });
-    }
+    } 
   
-    useEffect(() => {
-      (async () => {
-        if (Platform.OS !== 'web') {
-          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-          }
-        }
-      })();
-    }, []);
-  
-    const pickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.cancelled) {
-        setImage2(result.uri);
-      }
-    };
-  
-    return (
-    <View style={styles.principal}>
-      <View style={styles.secundaria}>
-        <Image 
-            style={styles.stretch}
-            source={require('../img/logo.png')}
-        />
-      </View>
-      <View style={styles.form}>
-            <ScrollView style={styles.containerScrollView}>
-            </ScrollView>
-            <View style={styles.containerButton}>
-                    <Button title="criar catalogo" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
+    return(   
+
+      <View style={styles.principal}>     
+        <Appbar.Header>
+          <Appbar.Action icon="person" onPress={() => navigation.navigate("Usuario", { userId:1 })}  />          
+          <Appbar.Content title= "Lista de Produtos" />
+          <Appbar.Action icon="add" onPress={() => navigation.navigate("CadastroProd", { userId:1 })}  />
+        </Appbar.Header>
+
+        {recuperaProdutos},
+        <View style={styles.principal}>     
+          <ScrollView style={{ flex: 1 }}>
+            {produtos.map(prod => (
+              <Produt key={prod.ID_PRODUT} produt={prod} />
+            ))}
+          </ScrollView>
+
+          <View style={styles.containerButton}>          
+            <Button title="cadastrar" 
+                    titleStyle={{ color: 'white', fontSize:19 }}   
+                    onPress={() => navigation.navigate("CriarCatalogo")} 
+                    buttonStyle={styles.buttonLogin}
+            />
             </View>
+        </View>
+
+        <View style={styles.containerButton}>          
+          <Button title="cadastrar" 
+                  titleStyle={{ color: 'white', fontSize:19 }}   
+                  onPress={() => navigation.navigate("CriarCatalogo")} 
+                  buttonStyle={styles.buttonLogin}
+          />
+          </View>
       </View>
-    </View>
     );
     
-    }
+    } 
   
   const styles = StyleSheet.create({
 
