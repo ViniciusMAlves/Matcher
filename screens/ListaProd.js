@@ -77,7 +77,7 @@ export default function ListaProduto({ route, navigation}) {
     return(   
 
       <View style={styles.principal}>     
-        <Appbar.Header backgroundColor='white'>
+        <Appbar.Header style={{ backgroundColor:"rgba(62, 170, 204, 1)"}}>
           <Appbar.Action icon="person" onPress={() => navigation.navigate("Usuario", { userId:userId })}  />          
           <Appbar.Content title= "Lista de Produtos" />
           <Appbar.Action icon="add" onPress={() => navigation.navigate("CadastroProd", { userId:userId })}  />
