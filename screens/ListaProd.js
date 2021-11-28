@@ -4,6 +4,8 @@ import {Button} from "react-native-elements";
 import { Provider as PaperProvider, Text, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 import { Appbar } from 'react-native-paper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import openDB from "../db";
 
 const db = openDB();
@@ -77,10 +79,10 @@ export default function ListaProduto({ route, navigation}) {
     return(   
 
       <View style={styles.principal}>     
-        <Appbar.Header style={{ backgroundColor:"rgba(62, 170, 204, 1)"}}>
-          <Appbar.Action icon="person" onPress={() => navigation.navigate("Usuario", { userId:userId })}  />          
-          <Appbar.Content title= "Lista de Produtos" />
-          <Appbar.Action icon="add" onPress={() => navigation.navigate("CadastroProd", { userId:userId })}  />
+        <Appbar.Header style={{ backgroundColor:"white"}}>
+          <Ionicons name="person-circle-outline" size={40} onPress={() => navigation.navigate("Usuario", { userId:userId })}/>         
+          <Appbar.Content title= "Lista de Produtos" titleStyle={{ fontWeight:"bold" }} />
+          <Ionicons name="add-circle-outline" size={40} onPress={() => navigation.navigate("CadastroProd", { userId:userId })}/>
         </Appbar.Header>
 
         <View style={styles.principal}>     
