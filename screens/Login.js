@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { StyleSheet, View,Image} from "react-native";
+import { StyleSheet, View, Image} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";

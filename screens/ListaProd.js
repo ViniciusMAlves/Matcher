@@ -49,11 +49,9 @@ function Produt(prod){
   };
 
   return (  
-    <View style={styles.secundaria}>
-      <Image 
-          style={styles.stretch}          
-      />
-    </View>  
+    <Image 
+      style={styles.stretch}          
+    />
   );
 }
 
@@ -86,19 +84,21 @@ export default function ListaProduto({ route, navigation}) {
         </Appbar.Header>
 
         <View style={styles.principal}>     
-          <ScrollView style={{ flex: 1 }}>
-            {!loading ? (
-              <View>
-                {produtos.map(prod => (
-                  <Produt key={prod.id} produt={prod} />
-                ))}
-              </View>
-            ) : (
-              <View style={{ alignItems: "center", justifyContent: "center", padding: 30 }}>
-                <ActivityIndicator size="large" color="black" />
-              </View>
-            )}
-          </ScrollView>
+          <View style={styles.secundaria}>
+            <ScrollView style={{ flex: 1 }}>
+              {!loading ? (
+                <View>
+                  {produtos.map(prod => (
+                    <Produt key={prod.id} produt={prod} />
+                  ))}
+                </View>
+              ) : (
+                <View style={{ alignItems: "center", justifyContent: "center", padding: 30 }}>
+                  <ActivityIndicator size="large" color="black" />
+                </View>
+              )}
+            </ScrollView>
+          </View>
         </View>
 
         <View style={styles.form}>            
