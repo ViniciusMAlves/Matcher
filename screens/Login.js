@@ -8,16 +8,16 @@ import openDB from "../db";
 
 const db = openDB();
 
-const EMPTY_PESSOA = {
+const EMPTY_Login = {
     USER: "",
     PASSWORD: "",
   };
 export default function Login({ navigation}) {
-    const [pessoa, setPessoa] = useState({}); 
+    const [pessoa, setPessoa] = useState({ ...EMPTY_Login}); 
 
     function verificaLogin(pessoa) {
         db.transaction(tx => {
-          tx.executeSql("SELECT FIRST 1 1 FROM PESSOAS WHERE USER = ? PASSWORD = ?", [pessoa.user, pessoa.password], (_, rs) => {
+          tx.executeSql("SELECT ID_PESSOA FROM PESSOAS WHERE USER = ? PASSWORD = ?", [ pessoa.user, pessoa.password ], (_, rs) => {
             console.log(rs.id);
             mudaTela(rs.id);
           });
@@ -25,8 +25,8 @@ export default function Login({ navigation}) {
       }
 
     function mudaTela(id){
-      //navigation.navigate("ListaProduto", { userId:1 });
-      navigation.navigate("CadastroProd", { userId:1 });
+      navigation.navigate("ListaProduto", { userId:1 });
+      //navigation.navigate("CadastroProd", { userId:1 });
     }
   
     return (

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { StyleSheet, View,Image, ScrollView} from "react-native";
+import { StyleSheet, View, Image, ScrollView, ActivityIndicator } from "react-native";
 import {Button} from "react-native-elements";
 import { Provider as PaperProvider, Text, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
@@ -60,12 +60,14 @@ function Produt(prod){
 export default function ListaProduto({ route, navigation}) {
     const { userId } = route.params;
     const [produtos, setProdut] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     function recuperaProdutos() {
       db.transaction(tx => {
         tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PESSOA = ? ORDER BY NOME ASC", [userId], (_, rs) => {
           setProdut(rs.rows._array);
-          console.log('Busca por produtos');
+          console.log('Busca por produtos');          
+          setLoading(false);
         });
       });
     } 
@@ -85,9 +87,17 @@ export default function ListaProduto({ route, navigation}) {
 
         <View style={styles.principal}>     
           <ScrollView style={{ flex: 1 }}>
-            {produtos.map(prod => (
-              <Produt key={prod.id} produt={prod} />
-            ))}
+            {!loading ? (
+              <View>
+                {produtos.map(prod => (
+                  <Produt key={prod.id} produt={prod} />
+                ))}
+              </View>
+            ) : (
+              <View style={{ alignItems: "center", justifyContent: "center", padding: 30 }}>
+                <ActivityIndicator size="large" color="black" />
+              </View>
+            )}
           </ScrollView>
         </View>
 

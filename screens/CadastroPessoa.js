@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { StyleSheet, View,Image} from "react-native";
+import { StyleSheet, View, Image} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
@@ -126,19 +126,25 @@ function FormCadastro({onSaveCadastro}){
                 {image2 && <Image source={{ uri: image2 }} style={{ width: 70, height: 70 }} />}
             </View>
             <LinearGradient 
-            colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-            start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-            style={styles.gradientInput}
+              colors={['#FFF', "rgba(62, 170, 204, 1)"]}
+              start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
+              style={styles.gradientInput}
             >
-            <Button
-                onPress={pickImage}
-                title="selecione a foto"
-                style={styles.formTextImage}
-                titleStyle={{ color: 'rgba(62, 170, 204, 1)', fontSize:19 }} 
-                buttonStyle={styles.formButtonImage}
-            /></LinearGradient>
+              <Button
+                  onPress={pickImage}
+                  title="selecione a foto"
+                  style={styles.formTextImage}
+                  titleStyle={{ color: 'rgba(62, 170, 204, 1)', fontSize:19 }} 
+                  buttonStyle={styles.formButtonImage}
+              />
+            </LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => {onSaveCadastro(pessoa, image2)}} buttonStyle={styles.buttonLogin}/>
+                <Button 
+                  title="sign up" 
+                  titleStyle={{ color: 'white', fontSize:19 }}   
+                  onPress={() => {onSaveCadastro(pessoa, image2)}} 
+                  buttonStyle={styles.buttonLogin}
+                />
             </View>
       </View>
     </View>
