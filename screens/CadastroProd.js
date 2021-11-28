@@ -41,11 +41,10 @@ function FormCadastro({onSaveCadastro}){
       quality: 1,
     });
 
-    console.log(result);
+    console.log(result);    
 
     if (!result.cancelled) {
       setImage(result.uri);
-      img => setProdut({ ...produto, img});
     }
   };
 
@@ -159,7 +158,7 @@ function FormCadastro({onSaveCadastro}){
                 buttonStyle={styles.formButtonImage}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="cadastrar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => onSaveCadastro(produto)} buttonStyle={styles.buttonLogin}/>
+                <Button title="cadastrar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() =>  onSaveCadastro(produto, image)} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
     </View>
@@ -171,13 +170,13 @@ export default function CadastroProduto({route}) {
     const { userId } = route.params;
     const [loading, setLoading] = useState(true);
 
-    function saveProduto(produto) {
+    function saveProduto( produto, img ) {
       db.transaction(tx => { 
-        tx.executeSql("INSERT INTO PRODUTOS (ID_PESSOA, NOME, QUANT, PRECO_ANT, PRECO_ATU, OBS, IMG_PROD) VALUES(?, ?, ?, ?, ?, ?, ?)", [userId, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod], (_, rs) => {
-          console.log(`Novo usuario salvo: ${rs.insertId}`);
+        tx.executeSql("INSERT INTO PRODUTOS (ID_PESSOA, NOME, QUANT, PRECO_ANT, PRECO_ATU, OBS, IMG_PROD) VALUES(?, ?, ?, ?, ?, ?, ?)", [userId, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, img], (_, rs) => {
+          console.log(`Novo produto salvo: ${rs.insertId}`);
           recuperaProdutos();
         });
-      });
+      }); 
     }
   
     function removeProduto(id) {
@@ -207,9 +206,7 @@ export default function CadastroProduto({route}) {
     }
   
   
-    useEffect(() => {
-      recuperaProdutos();
-    }, []);
+    
   
     
   

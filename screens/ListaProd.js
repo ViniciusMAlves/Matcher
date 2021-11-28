@@ -65,6 +65,7 @@ export default function ListaProduto({ route, navigation}) {
       db.transaction(tx => {
         tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PESSOA = ? ORDER BY NOME ASC", [userId], (_, rs) => {
           setProdut(rs.rows._array);
+          console.log('Busca por produtos');
         });
       });
     } 
@@ -77,9 +78,9 @@ export default function ListaProduto({ route, navigation}) {
 
       <View style={styles.principal}>     
         <Appbar.Header backgroundColor='white'>
-          <Appbar.Action icon="person" onPress={() => navigation.navigate("Usuario", { userId:1 })}  />          
+          <Appbar.Action icon="person" onPress={() => navigation.navigate("Usuario", { userId:userId })}  />          
           <Appbar.Content title= "Lista de Produtos" />
-          <Appbar.Action icon="add" onPress={() => navigation.navigate("CadastroProd", { userId:1 })}  />
+          <Appbar.Action icon="add" onPress={() => navigation.navigate("CadastroProd", { userId:userId })}  />
         </Appbar.Header>
 
         <View style={styles.principal}>     

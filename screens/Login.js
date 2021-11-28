@@ -25,8 +25,8 @@ export default function Login({ navigation}) {
       }
 
     function mudaTela(id){
-      navigation.navigate("ListaProduto", { userId:1 });
-      //navigation.navigate("CadastroProd", { userId:1 });
+      //navigation.navigate("ListaProduto", { userId:1 });
+      navigation.navigate("CadastroProd", { userId:1 });
     }
   
     return (
@@ -72,7 +72,7 @@ export default function Login({ navigation}) {
                 onChangeText={password => setPessoa({ ...pessoa, password})}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="login" titleStyle={{ color: 'white', fontSize:19 }}  onPress={() => verificaLogin(pessoa)} buttonStyle={styles.buttonLogin}/>
+                <Button title="login" titleStyle={{ color: 'white', fontSize:19 }}  onPress={() => mudaTela(1)} buttonStyle={styles.buttonLogin}/>
                 <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("CadastroPessoa")} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
