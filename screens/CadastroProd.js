@@ -10,7 +10,6 @@ import openDB from "../db";
 const db = openDB();
 
 const EMPTY_PRODUT = {
-  ID_PESSOA: 0,
   NOME: "",
   QUANT: 0,
   PRECO_ANT: 0.0,
@@ -20,7 +19,7 @@ const EMPTY_PRODUT = {
 };
 
 function FormCadastro({onSaveCadastro}){
-  const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
+  const [produto, setProdut] = useState({ ...EMPTY_PRODUT });  
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -46,7 +45,7 @@ function FormCadastro({onSaveCadastro}){
 
     if (!result.cancelled) {
       setImage(result.uri);
-      img => setProdut({ ...produtos, img});
+      img => setProdut({ ...produto, img});
     }
   };
 
@@ -73,7 +72,7 @@ function FormCadastro({onSaveCadastro}){
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="nome"
-                onChangeText={nome => setProdut({ ...produtos, nome})}
+                onChangeText={nome => setProdut({ ...produto, nome})}
             /></LinearGradient>
             <LinearGradient 
             colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -89,7 +88,7 @@ function FormCadastro({onSaveCadastro}){
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="qtd"
-                onChangeText={quant => setProdut({ ...produtos, quant})}
+                onChangeText={quant => setProdut({ ...produto, quant})}
                 keyboardType="numeric"
             /></LinearGradient>
             <View style={styles.containerInput}>
@@ -107,7 +106,7 @@ function FormCadastro({onSaveCadastro}){
                     underlineColor="#fff"
                     style={styles.formInput2}
                     label="preço an."
-                    onChangeText={preco_ant => setProdut({ ...produtos, preco_ant})}
+                    onChangeText={preco_ant => setProdut({ ...produto, preco_ant})}
                     keyboardType="decimal-pad"
                 /></LinearGradient>
                 <LinearGradient 
@@ -124,7 +123,7 @@ function FormCadastro({onSaveCadastro}){
                     underlineColor="#fff"
                     style={styles.formInput2}
                     label="preço at."
-                    onChangeText={preco_atu => setProdut({ ...produtos, preco_atu})}
+                    onChangeText={preco_atu => setProdut({ ...produto, preco_atu})}
                     keyboardType="decimal-pad"
                 /></LinearGradient>
             </View>
@@ -142,7 +141,7 @@ function FormCadastro({onSaveCadastro}){
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="inf. adicionais"
-                onChangeText={obs => setProdut({ ...produtos, obs})}
+                onChangeText={obs => setProdut({ ...produto, obs})}
             /></LinearGradient>
             <View style={styles.containerImage}>
                 {image && <Image source={{ uri: image }} style={{ width: 70, height: 70 }} />}
@@ -160,7 +159,7 @@ function FormCadastro({onSaveCadastro}){
                 buttonStyle={styles.formButtonImage}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="cadastrar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => onSaveCadastro(produtos)} buttonStyle={styles.buttonLogin}/>
+                <Button title="cadastrar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => onSaveCadastro(produto)} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
     </View>
@@ -168,14 +167,14 @@ function FormCadastro({onSaveCadastro}){
 }
 
 
-export default function CadastroProduto({route}) {
+export default function CadastroProduto({route}) { 
     const { userId } = route.params;
     const [loading, setLoading] = useState(true);
 
     function saveProduto(produto) {
-      db.transaction(tx => {
+      db.transaction(tx => { 
         tx.executeSql("INSERT INTO PRODUTOS (ID_PESSOA, NOME, QUANT, PRECO_ANT, PRECO_ATU, OBS, IMG_PROD) VALUES(?, ?, ?, ?, ?, ?, ?)", [userId, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod], (_, rs) => {
-          console.log(`Novo produto salvo: ${rs.insertId}`);
+          console.log(`Novo usuario salvo: ${rs.insertId}`);
           recuperaProdutos();
         });
       });

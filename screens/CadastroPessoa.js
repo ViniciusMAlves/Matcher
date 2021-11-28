@@ -16,7 +16,7 @@ const EMPTY_PESSOA = {
   IMG_PESSOA: "",
 };
 
-function FormCadastro({onSaveCadastro, navigation}){
+function FormCadastro({onSaveCadastro}){
   const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA }); 
   const [image2, setImage2] = useState(null);
   
@@ -138,7 +138,7 @@ function FormCadastro({onSaveCadastro, navigation}){
                 buttonStyle={styles.formButtonImage}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => {onSaveCadastro(pessoa); navigation.navigate("Login")}} buttonStyle={styles.buttonLogin}/>
+                <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => {onSaveCadastro(pessoa)}} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
     </View>
@@ -149,7 +149,7 @@ export default function CadastroPessoa({ navigation}) {
     const [loading, setLoading] = useState(true);
 
     function savePessoa(pessoa) {
-      db.transaction(tx => {
+      db.transaction(tx => { 
         tx.executeSql("INSERT INTO PESSOAS (USER, EMAIL, PASSWORD, IMG_PESSOA) VALUES(?, ?, ?, ?)", [pessoa.user, pessoa.email, pessoa.password, pessoa.img_pessoa], (_, rs) => {
           console.log(`Novo usuario salvo: ${rs.insertId}`);
           recuperaPessoa();

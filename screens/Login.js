@@ -25,6 +25,7 @@ export default function Login({ navigation}) {
 
     function mudaTela(id){
       navigation.navigate("ListaProduto", { userId:1 });
+      //navigation.navigate("CadastroProd", { userId:1 });
     }
   
     return (

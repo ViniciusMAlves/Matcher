@@ -53,7 +53,7 @@ function Produt(prod){
     <View style={styles.secundaria}>
       <Image 
           style={styles.stretch}
-          source={require('../img/logo.png')}
+          source={require(prod.Image)}
       />
     </View>
     <View style={styles.form}>
@@ -69,7 +69,7 @@ function Produt(prod){
 
 export default function ListaProduto({ route, navigation}) {
     const { userId } = route.params;
-    const [produtos, setProdut] = useState(null);
+    const [produtos, setProdut] = useState([]);
 
     function recuperaProdutos() {
       db.transaction(tx => {
@@ -78,21 +78,24 @@ export default function ListaProduto({ route, navigation}) {
         });
       });
     } 
+
+    useEffect(() => {
+      recuperaProdutos();
+    }, []);
   
     return(   
 
       <View style={styles.principal}>     
-        <Appbar.Header>
+        <Appbar.Header backgroundColor='white'>
           <Appbar.Action icon="person" onPress={() => navigation.navigate("Usuario", { userId:1 })}  />          
           <Appbar.Content title= "Lista de Produtos" />
           <Appbar.Action icon="add" onPress={() => navigation.navigate("CadastroProd", { userId:1 })}  />
         </Appbar.Header>
 
-        {recuperaProdutos},
         <View style={styles.principal}>     
           <ScrollView style={{ flex: 1 }}>
             {produtos.map(prod => (
-              <Produt key={prod.ID_PRODUT} produt={prod} />
+              <Produt key={prod.id} produt={prod} />
             ))}
           </ScrollView>
 

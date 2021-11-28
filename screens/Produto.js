@@ -19,10 +19,170 @@ const EMPTY_PRODUT = {
   IMG_PROD: "",
 };
 
+function PegaProdut({ produt, onEdit }){
+  const [produto, setProdut] = useState({ ...EMPTY_PRODUT });  
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);      
+      img => setProdut({ ...produto, img});
+    }
+  };
+
+
+  return (
+  <View style={styles.principal}>
+    <View style={styles.secundaria}>
+      <Image 
+          style={styles.stretch}
+          source={require('../img/logo.png')}
+      />
+    </View>
+    <View style={styles.form}>
+          <View style={styles.containerImage}>
+              <Image source={{ uri: image }} style={{marginBottom: -20, width: 80, height: 80 }} />
+          </View>
+          <LinearGradient 
+                  colors={['#FFF', "rgba(62, 170, 204, 1)"]}
+                  start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
+                  style={styles.gradientInput}
+          >
+          <TextInput
+              mode="outlined"
+              autoCapitalize="none"
+              activeOutlineColor="rgba(62, 170, 204, 1)"
+              theme={{ colors: { placeholder: "#ccc"} }}
+              outlineColor="#FFF"
+              underlineColor="#fff"
+              style={styles.formInput}
+              label="nome"
+              onChangeText={nome => setProdut({ ...produto, nome})}
+              value={produt.nome}
+          /></LinearGradient>
+          <LinearGradient 
+          colors={['#FFF', "rgba(62, 170, 204, 1)"]}
+          start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
+          style={styles.gradientInput}
+          >
+          <TextInput
+              mode="outlined"
+              autoCapitalize="none"
+              activeOutlineColor="rgba(62, 170, 204, 1)"
+              theme={{ colors: { placeholder: "#ccc"} }}
+              outlineColor="#FFF"
+              underlineColor="#fff"
+              style={styles.formInput}
+              label="qtd"
+              onChangeText={qtd => setProdut({ ...produto, qtd})}
+              value={produt.quant}
+          /></LinearGradient>
+          <View style={styles.containerInput}>
+              <LinearGradient 
+              colors={['#FFF', "rgba(62, 170, 204, 1)"]}
+              start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
+              style={styles.gradientInput2}
+              >
+              <TextInput
+                  mode="outlined"
+                  activeOutlineColor="rgba(62, 170, 204, 1)"
+                  autoCapitalize="none"
+                  outlineColor="#FFF"
+                  theme={{ colors: { placeholder: "#ccc"} }}
+                  underlineColor="#fff"
+                  style={styles.formInput2}
+                  label="preço an."
+                  onChangeText={preco_ant => setProdut({ ...produto, preco_ant})}
+                  value={produt.preco_ant}
+              /></LinearGradient>
+              <LinearGradient 
+              colors={['#FFF', "rgba(62, 170, 204, 1)"]}
+              start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
+              style={styles.gradientInput2}
+              >
+              <TextInput
+                  mode="outlined"
+                  activeOutlineColor="rgba(62, 170, 204, 1)"
+                  autoCapitalize="none"
+                  outlineColor="#FFF"
+                  theme={{ colors: { placeholder: "#ccc"} }}
+                  underlineColor="#fff"
+                  style={styles.formInput2}
+                  label="preço at."
+                  onChangeText={preco_atu => setProdut({ ...produto, preco_atu})}
+                  value={produt.preco_atu}
+              /></LinearGradient>
+          </View>
+          <LinearGradient 
+          colors={['#FFF', "rgba(62, 170, 204, 1)"]}
+          start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
+          style={styles.gradientInput}
+          >
+          <TextInput
+              mode="outlined"
+              activeOutlineColor="rgba(62, 170, 204, 1)"
+              autoCapitalize="none"
+              outlineColor="#FFF"
+              theme={{ colors: { placeholder: "#ccc"} }}
+              underlineColor="#fff"
+              style={styles.formInput}
+              label="inf. adicionais"
+              onChangeText={obs => setProdut({ ...produto, obs})}
+              value={produt.obs}
+          /></LinearGradient>
+          <LinearGradient 
+          colors={['#FFF', "rgba(62, 170, 204, 1)"]}
+          start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
+          style={styles.gradientInput}
+          >
+          <Button
+              onPress={pickImage}
+              title="selecione a foto"
+              style={styles.formTextImage}
+              titleStyle={{ color: 'rgba(62, 170, 204, 1)', fontSize:19 }} 
+              buttonStyle={styles.formButtonImage}
+          /></LinearGradient>
+          <View style={styles.containerButton}>
+              <Button title="editar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => onEdit(produto) } buttonStyle={styles.buttonLogin}/>
+          </View>
+    </View>
+  </View>
+  );
+}
+
 export default function Produto({ route, navigation}) {
     const { ProdId } = route.params;
+    const { UserId } = route.params;
     const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
     const [image, setImage] = useState(null);
+
+    function alteraProduto(produto) {
+      db.transaction(tx => { 
+        tx.executeSql("UPDATE PRODUTOS SET ID_PESSOA = ?, NOME = ?, QUANT = ?, PRECO_ANT = ?, PRECO_ATU = ?, OBS = ?, IMG_PROD = ? WHERE ID_PRODUT = ?", [UserId, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod, ProdId], (_, rs) => {
+          console.log(`Novo usuario salvo: ${rs.insertId}`);
+          recuperaProdutos();
+        });
+      });
+    }
 
     function recuperaProduto() {
       db.transaction(tx => {
@@ -34,141 +194,20 @@ export default function Produto({ route, navigation}) {
     }
   
     useEffect(() => {
-      (async () => {
-        if (Platform.OS !== 'web') {
-          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-          }
-        }
-      })();
-    }, []);
-  
-    const pickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.cancelled) {
-        setImage(result.uri);
-      }
-    };
-  
-  
-    return (
-    <View style={styles.principal}>
-      <View style={styles.secundaria}>
-        <Image 
-            style={styles.stretch}
-            source={require('../img/logo.png')}
-        />
-      </View>
-      <View style={styles.form}>
-            <View style={styles.containerImage}>
-                <Image source={{ uri: image }} style={{marginBottom: -20, width: 80, height: 80 }} />
-            </View>
-            <LinearGradient 
-                    colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-                    start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-                    style={styles.gradientInput}
-            >
-            <TextInput
-                mode="outlined"
-                autoCapitalize="none"
-                activeOutlineColor="rgba(62, 170, 204, 1)"
-                theme={{ colors: { placeholder: "#ccc"} }}
-                outlineColor="#FFF"
-                underlineColor="#fff"
-                style={styles.formInput}
-                label="nome"
-            /></LinearGradient>
-            <LinearGradient 
-            colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-            start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-            style={styles.gradientInput}
-            >
-            <TextInput
-                mode="outlined"
-                autoCapitalize="none"
-                activeOutlineColor="rgba(62, 170, 204, 1)"
-                theme={{ colors: { placeholder: "#ccc"} }}
-                outlineColor="#FFF"
-                underlineColor="#fff"
-                style={styles.formInput}
-                label="qtd"
-            /></LinearGradient>
-            <View style={styles.containerInput}>
-                <LinearGradient 
-                colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-                start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-                style={styles.gradientInput2}
-                >
-                <TextInput
-                    mode="outlined"
-                    activeOutlineColor="rgba(62, 170, 204, 1)"
-                    autoCapitalize="none"
-                    outlineColor="#FFF"
-                    theme={{ colors: { placeholder: "#ccc"} }}
-                    underlineColor="#fff"
-                    style={styles.formInput2}
-                    label="preço an."
-                /></LinearGradient>
-                <LinearGradient 
-                colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-                start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-                style={styles.gradientInput2}
-                >
-                <TextInput
-                    mode="outlined"
-                    activeOutlineColor="rgba(62, 170, 204, 1)"
-                    autoCapitalize="none"
-                    outlineColor="#FFF"
-                    theme={{ colors: { placeholder: "#ccc"} }}
-                    underlineColor="#fff"
-                    style={styles.formInput2}
-                    label="preço at."
-                /></LinearGradient>
-            </View>
-            <LinearGradient 
-            colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-            start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-            style={styles.gradientInput}
-            >
-            <TextInput
-                mode="outlined"
-                activeOutlineColor="rgba(62, 170, 204, 1)"
-                autoCapitalize="none"
-                outlineColor="#FFF"
-                theme={{ colors: { placeholder: "#ccc"} }}
-                underlineColor="#fff"
-                style={styles.formInput}
-                label="inf. adicionais"
-            /></LinearGradient>
-            <LinearGradient 
-            colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-            start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-            style={styles.gradientInput}
-            >
-            <Button
-                onPress={pickImage}
-                title="selecione a foto"
-                style={styles.formTextImage}
-                titleStyle={{ color: 'rgba(62, 170, 204, 1)', fontSize:19 }} 
-                buttonStyle={styles.formButtonImage}
-            /></LinearGradient>
-            <View style={styles.containerButton}>
-                <Button title="editar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
-            </View>
-      </View>
-    </View>
+      recuperaProduto();
+    }, []);  
+
+    return(
+      <View style={styles.principal}>     
+          <ScrollView style={{ flex: 1 }}>
+            {produtos.map(prod => (
+              <Produt key={prod.id} produt={prod} onEdit={alteraProduto} />
+            ))}
+          </ScrollView>
+        </View>
     );
     
-    }
+  }
   
   const styles = StyleSheet.create({
 
