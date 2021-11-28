@@ -48,22 +48,12 @@ function Produt(prod){
     }
   };
 
-  return (
-  <View style={styles.principal}>
+  return (  
     <View style={styles.secundaria}>
       <Image 
-          style={styles.stretch}
-          source={require(prod.Image)}
+          style={styles.stretch}          
       />
-    </View>
-    <View style={styles.form}>
-          <ScrollView style={styles.containerScrollView}>
-          </ScrollView>
-          <View style={styles.containerButton}>
-                  <Button title="criar catalogo" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>
-          </View>
-    </View>
-  </View>
+    </View>  
   );
 }
 
@@ -98,25 +88,20 @@ export default function ListaProduto({ route, navigation}) {
               <Produt key={prod.id} produt={prod} />
             ))}
           </ScrollView>
-
-          <View style={styles.containerButton}>          
-            <Button title="cadastrar" 
-                    titleStyle={{ color: 'white', fontSize:19 }}   
-                    onPress={() => navigation.navigate("CriarCatalogo")} 
-                    buttonStyle={styles.buttonLogin}
-            />
-            </View>
         </View>
 
-        <View style={styles.containerButton}>          
-          <Button title="cadastrar" 
-                  titleStyle={{ color: 'white', fontSize:19 }}   
-                  onPress={() => navigation.navigate("CriarCatalogo")} 
-                  buttonStyle={styles.buttonLogin}
-          />
-          </View>
+        <View style={styles.form}>            
+            <View style={styles.containerButton}>
+              <Button title="criar catalogo" 
+                      titleStyle={{ color: 'white', fontSize:19 }}   
+                      onPress={() => navigation.navigate("CriarCatalogo")} 
+                      buttonStyle={styles.buttonLogin}
+              />
+            </View>
       </View>
-    );
+        
+    </View>
+  );
     
     } 
   
@@ -179,7 +164,7 @@ export default function ListaProduto({ route, navigation}) {
         justifyContent: "center",
         flexDirection: "row",
         width: 260,
-        marginBottom: 30,
+        marginBottom: 5,
     },
     
     buttonLogin: {

@@ -18,7 +18,8 @@ export default function Login({ navigation}) {
     function verificaLogin(pessoa) {
         db.transaction(tx => {
           tx.executeSql("SELECT FIRST 1 1 FROM PESSOAS WHERE USER = ? PASSWORD = ?", [pessoa.user, pessoa.password], (_, rs) => {
-            console.log(`opa`);
+            console.log(rs.id);
+            mudaTela(rs.id);
           });
         });
       }
@@ -71,7 +72,7 @@ export default function Login({ navigation}) {
                 onChangeText={password => setPessoa({ ...pessoa, password})}
             /></LinearGradient>
             <View style={styles.containerButton}>
-                <Button title="login" titleStyle={{ color: 'white', fontSize:19 }}  onPress={() => mudaTela(1)} buttonStyle={styles.buttonLogin}/>
+                <Button title="login" titleStyle={{ color: 'white', fontSize:19 }}  onPress={() => verificaLogin(pessoa)} buttonStyle={styles.buttonLogin}/>
                 <Button title="sign up" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("CadastroPessoa")} buttonStyle={styles.buttonLogin}/>
             </View>
       </View>
