@@ -142,22 +142,13 @@ function FormCadastro({onSaveCadastro}){
                 label="inf. adicionais"
                 onChangeText={obs => setProdut({ ...produto, obs})}
             /></LinearGradient>
-            <View style={styles.containerImage}>
-                {image && <Image source={{ uri: image }} style={{ width: 70, height: 70 }} />}
-            </View>
-             <LinearGradient 
-              colors={['#FFF', "rgba(62, 170, 204, 1)"]}
-              start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
-              style={styles.gradientInput}
-            >
-              <Button
-                  onPress={pickImage}
-                  title="selecione a foto"
-                  style={styles.formTextImage}
-                  titleStyle={{ color: 'rgba(62, 170, 204, 1)', fontSize:19 }} 
-                  buttonStyle={styles.formButtonImage}
-              />
-            </LinearGradient> 
+            <Button
+                onPress={pickImage}
+                title="selecione a foto"
+                style={styles.formTextImage}
+                titleStyle={{ color: 'rgba(62, 170, 204, 1)', fontSize:19 }} 
+                buttonStyle={styles.formButtonImage}
+            />
             <View style={styles.containerButton}>
                 <Button 
                   title="cadastrar" 
@@ -317,7 +308,7 @@ export default function CadastroProduto({route}) {
     
     buttonLogin: {
         backgroundColor: "rgba(62, 170, 204, 1)",
-        marginTop: 20,
+        marginTop: 40,
         width:220,
         height:45,
         borderRadius:25,
@@ -329,7 +320,7 @@ export default function CadastroProduto({route}) {
         backgroundColor: "#fff",
         width: 264.5,
         marginLeft:0.25,
-        height: 58,
+        height: 59,
         fontSize:19,
         zIndex:40,
         
