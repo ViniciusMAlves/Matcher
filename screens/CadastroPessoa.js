@@ -152,6 +152,7 @@ function FormCadastro({onSaveCadastro}){
 }
 
 export default function CadastroPessoa({ navigation}) {
+    const [pessoa, setPessoa] = useState({ ...EMPTY_PESSOA });
     const [loading, setLoading] = useState(true);
 
     function savePessoa(pessoa, img) {
@@ -173,7 +174,7 @@ export default function CadastroPessoa({ navigation}) {
   
     function recuperaPessoa() {
       db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PESSOAS ORDER BY NOME ASC", [], (_, rs) => {
+        tx.executeSql("SELECT * FROM PESSOAS ORDER BY USER ASC", [], (_, rs) => {
           setPessoa(rs.rows._array);
           setLoading(false);
         });
@@ -192,15 +193,12 @@ export default function CadastroPessoa({ navigation}) {
   
     useEffect(() => {
       recuperaPessoa();
-    }, []);
-  
-    
-  
+    }, []);  
   
     return (
-    <View style={styles.principal}>  
-      <FormCadastro onSaveCadastro={savePessoa} />        
-    </View>
+      <View style={styles.principal}>  
+        <FormCadastro onSaveCadastro={savePessoa} />        
+      </View>
     );    
 }
   

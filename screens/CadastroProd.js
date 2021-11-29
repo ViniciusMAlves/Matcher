@@ -210,11 +210,15 @@ export default function CadastroProduto({route}) {
         });
       });
     }  
+
+    useEffect(() => {
+      recuperaProdutos();
+    }, []);
   
     return (
-    <View style={styles.principal}>  
-      <FormCadastro onSaveCadastro={saveProduto} />        
-    </View>
+      <View style={styles.principal}>  
+        <FormCadastro onSaveCadastro={saveProduto} />        
+      </View>
     );
     
     }
