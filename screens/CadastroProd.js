@@ -11,9 +11,9 @@ const db = openDB();
 
 const EMPTY_PRODUT = {
   NOME: "",
-  QUANT: 0,
-  PRECO_ANT: 0.0,
-  PRECO_ATU: 0.0,
+  QUANT: null,
+  PRECO_ANT: null,
+  PRECO_ATU: null,
   OBS: "",
   IMG_PROD: "",
 };
@@ -145,7 +145,7 @@ function FormCadastro({onSaveCadastro}){
             <View style={styles.containerImage}>
                 {image && <Image source={{ uri: image }} style={{ width: 70, height: 70 }} />}
             </View>
-            <LinearGradient 
+             <LinearGradient 
               colors={['#FFF', "rgba(62, 170, 204, 1)"]}
               start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
               style={styles.gradientInput}
@@ -157,7 +157,7 @@ function FormCadastro({onSaveCadastro}){
                   titleStyle={{ color: 'rgba(62, 170, 204, 1)', fontSize:19 }} 
                   buttonStyle={styles.formButtonImage}
               />
-            </LinearGradient>
+            </LinearGradient> 
             <View style={styles.containerButton}>
                 <Button 
                   title="cadastrar" 
@@ -174,6 +174,7 @@ function FormCadastro({onSaveCadastro}){
 
 export default function CadastroProduto({route}) { 
     const { userId } = route.params;
+    const [produto, setProdut] = useState([]);
     const [loading, setLoading] = useState(true);
 
     function saveProduto( produto, img ) {
@@ -304,6 +305,7 @@ export default function CadastroProduto({route}) {
         justifyContent: "center",
         flexDirection: "row",
         width: 260,
+        zIndex:999,
     },
 
     containerImage:{
