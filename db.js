@@ -18,8 +18,7 @@ const SQL_CREATE_ENTRIES = [
         PRECO_ANT DOUBLE,
         PRECO_ATU DOUBLE,
         OBS VARCHAR(500),
-        IMG_PROD BLOB,
-        FOREIGN KEY(ID_PESSOA) REFERENCES PESSOAS(ID_PESSOA)
+        IMG_PROD BLOB
       )`,
   ];
 

@@ -51,9 +51,13 @@ function Produt(prod){
   };
 
   return (  
-    <Image 
-      style={styles.stretch}          
-    />
+    <View>
+      <Image 
+        style={styles.stretch}      
+        source={prod.IMG_PROD}   
+      />
+      <Text>{prod.NOME}</Text>
+    </View>
   );
 }
 
