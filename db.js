@@ -1,26 +1,17 @@
 import * as SQLite from "expo-sqlite";
 
-const DATABASE_NAME = "MATCHER.sqlite";
+const DATABASE_NAME = "MATCHER11.sqlite";
 
 const SQL_CREATE_ENTRIES = [
-    `CREATE TABLE IF NOT EXISTS PESSOAS (
-        ID_PESSOA INTEGER PRIMARY KEY autoincrement,
-        USER VARCHAR(255) NOT NULL,
-        EMAIL VARCHAR(255) NOT NULL,
-        PASSWORD VARCHAR(255) NOT NULL,
-        IMG_PESSOA BLOB
-      )`,
-    `CREATE TABLE IF NOT EXISTS PRODUTOS (
-        ID_PRODUT INTEGER PRIMARY KEY autoincrement,
-        ID_PESSOA INTEGER NOT NULL, 
-        NOME VARCHAR(255) NOT NULL,
-        QUANT integer,
-        PRECO_ANT DOUBLE,
-        PRECO_ATU DOUBLE,
-        OBS VARCHAR(500),
-        IMG_PROD BLOB
-      )`,
-  ];
+  `CREATE TABLE IF NOT EXISTS produtos (
+      id INTEGER PRIMARY KEY autoincrement,
+      nome varchar(255) NOT NULL,
+      quant integer NOT NULL,
+      preco_ant integer NOT NULL,
+      preco_atu integer NOT NULL,
+      obs varchar(255) NOT NULL
+    )`,
+];
 
 let _db = null;
 

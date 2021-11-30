@@ -19,7 +19,7 @@ const EMPTY_PRODUT = {
   IMG_PROD: "",
 };
 
-function FormPegaProdut({ produt, onEdit }){
+function PegaProdut({ produt, onEdit }){
   const [produto, setProdut] = useState({ ...EMPTY_PRODUT });  
 
   useEffect(() => {
@@ -60,7 +60,7 @@ function FormPegaProdut({ produt, onEdit }){
     </View>
     <View style={styles.form}>
           <View style={styles.containerImage}>
-              <Image source={{ uri: produto.IMG_PROD }} style={{marginBottom: -20, width: 80, height: 80 }} />
+              <Image source={{ uri: image }} style={{marginBottom: -20, width: 80, height: 80 }} />
           </View>
           <LinearGradient 
                   colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -200,7 +200,9 @@ export default function Produto({ route, navigation}) {
     return(
       <View style={styles.principal}>     
           <ScrollView style={{ flex: 1 }}>
-            <FormPegaProdut produt={produtos} onEdit={alteraProduto} />
+            {produtos.map(prod => (
+              <Produt key={prod.id} produt={prod} onEdit={alteraProduto} />
+            ))}
           </ScrollView>
         </View>
     );

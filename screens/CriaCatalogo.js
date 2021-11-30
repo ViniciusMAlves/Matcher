@@ -5,19 +5,10 @@ import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 
-const flyers = {
-  flayer1:"../img/Flyer/Modelo1-1.jpg",
-  flayer2:"../img/Flyer/Modelo1-2.jpg",
-  flayer3:"../img/Flyer/Modelo1-3.jpg",
-  flayer4:"../img/Flyer/Modelo1-4.jpg",
-  flayer5:"../img/Flyer/Modelo1-5.jpg",
-  flayer6:"../img/Flyer/Modelo2-1.png",
-  flayer7:"../img/Flyer/Modelo3-1.png",
-}
 
 export default function CriarCatalogo({ navigation}) {
 
-    const [image, setImage] = useState({ ...flyers });
+    const [image, setImage] = useState(null);
   
     useEffect(() => {
       (async () => {
@@ -88,7 +79,7 @@ export default function CriarCatalogo({ navigation}) {
                 /></LinearGradient>
             </View>
             <View style={styles.containerImage}>
-                <Image source={{ uri: image.flayer1 }} style={{backgroundColor: "#CCC",marginBottom: -20, width: 220, height: 300 }} />
+                <Image source={{ uri: image }} style={{backgroundColor: "#CCC",marginBottom: -20, width: 220, height: 300 }} />
             </View>
             <View style={styles.containerButton}>
                 <Button title="exportar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Login")} buttonStyle={styles.buttonLogin}/>

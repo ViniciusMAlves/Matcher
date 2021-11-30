@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { StyleSheet, View, Image, Platform } from "react-native";
+import { StyleSheet, View, Image, Platform, Alert} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
@@ -9,17 +9,16 @@ import openDB from "../db";
 
 const db = openDB();
 
-const EMPTY_PRODUT = {
-  NOME: "",
-  QUANT: null,
-  PRECO_ANT: null,
-  PRECO_ATU: null,
-  OBS: "",
-  IMG_PROD: "",
+const EMPTY_PRODUTO = {
+  nome: "", 
+  quant: null, 
+  preco_ant: null,
+  preco_atu: null,
+  obs: "",
 };
 
-function FormCadastro({onSaveCadastro}){
-  const [produto, setProdut] = useState({ ...EMPTY_PRODUT });  
+function FormCadastro({ onSaveProduto }) {
+  const [produto, setProduto] = useState({ ...EMPTY_PRODUTO });  
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -63,6 +62,7 @@ function FormCadastro({onSaveCadastro}){
                     style={styles.gradientInput}
             >
             <TextInput
+                value={produto.nome}
                 mode="outlined"
                 autoCapitalize="none"
                 activeOutlineColor="rgba(62, 170, 204, 1)"
@@ -71,7 +71,7 @@ function FormCadastro({onSaveCadastro}){
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="nome"
-                onChangeText={nome => setProdut({ ...produto, nome})}
+                onChangeText={nome => setProduto({ ...produto, nome})}
             /></LinearGradient>
             <LinearGradient 
             colors={['#FFF', "rgba(62, 170, 204, 1)"]}
@@ -79,6 +79,7 @@ function FormCadastro({onSaveCadastro}){
             style={styles.gradientInput}
             >
             <TextInput
+                value={produto.quant}
                 mode="outlined"
                 autoCapitalize="none"
                 activeOutlineColor="rgba(62, 170, 204, 1)"
@@ -87,7 +88,7 @@ function FormCadastro({onSaveCadastro}){
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="qtd"
-                onChangeText={quant => setProdut({ ...produto, quant})}
+                onChangeText={quant => setProduto({ ...produto, quant})}
                 keyboardType="numeric"
             /></LinearGradient>
             <View style={styles.containerInput}>
@@ -97,6 +98,7 @@ function FormCadastro({onSaveCadastro}){
                 style={styles.gradientInput2}
                 >
                 <TextInput
+                    value={produto.preco_ant}
                     mode="outlined"
                     activeOutlineColor="rgba(62, 170, 204, 1)"
                     autoCapitalize="none"
@@ -105,7 +107,7 @@ function FormCadastro({onSaveCadastro}){
                     underlineColor="#fff"
                     style={styles.formInput2}
                     label="preço an."
-                    onChangeText={preco_ant => setProdut({ ...produto, preco_ant})}
+                    onChangeText={preco_ant => setProduto({ ...produto, preco_ant})}
                     keyboardType="decimal-pad"
                 /></LinearGradient>
                 <LinearGradient 
@@ -114,6 +116,7 @@ function FormCadastro({onSaveCadastro}){
                 style={styles.gradientInput2}
                 >
                 <TextInput
+                    value={produto.preco_atu}
                     mode="outlined"
                     activeOutlineColor="rgba(62, 170, 204, 1)"
                     autoCapitalize="none"
@@ -122,7 +125,7 @@ function FormCadastro({onSaveCadastro}){
                     underlineColor="#fff"
                     style={styles.formInput2}
                     label="preço at."
-                    onChangeText={preco_atu => setProdut({ ...produto, preco_atu})}
+                    onChangeText={preco_atu => setProduto({ ...produto, preco_atu})}
                     keyboardType="decimal-pad"
                 /></LinearGradient>
             </View>
@@ -132,6 +135,7 @@ function FormCadastro({onSaveCadastro}){
             style={styles.gradientInput}
             >
             <TextInput
+                value={produto.obs}
                 mode="outlined"
                 activeOutlineColor="rgba(62, 170, 204, 1)"
                 autoCapitalize="none"
@@ -140,7 +144,7 @@ function FormCadastro({onSaveCadastro}){
                 underlineColor="#fff"
                 style={styles.formInput}
                 label="inf. adicionais"
-                onChangeText={obs => setProdut({ ...produto, obs})}
+                onChangeText={obs => setProduto({ ...produto, obs })}
             /></LinearGradient>
             <Button
                 onPress={pickImage}
@@ -153,7 +157,16 @@ function FormCadastro({onSaveCadastro}){
                 <Button 
                   title="cadastrar" 
                   titleStyle={{ color: 'white', fontSize:19 }}   
-                  onPress={() => {onSaveCadastro(produto, image)}} 
+                  onPress={() => {
+                    if(produto.obs != ""){onSaveProduto(produto, image);
+                    setProduto({ ...EMPTY_PRODUTO });
+                    }else{
+                      Alert.alert(
+                        "",
+                        "Há campos não preenchidos ou preenchidos incorretamente "
+                      );
+                    };
+                  }}
                   buttonStyle={styles.buttonLogin}
                 />
             </View>
@@ -163,57 +176,49 @@ function FormCadastro({onSaveCadastro}){
 }
 
 
-export default function CadastroProduto({route}) { 
-    const { userId } = route.params;
-    const [produto, setProdut] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function CadastroProd({ navigation}) {
 
-    function saveProduto( produto, img ) {
-      db.transaction(tx => { 
-        tx.executeSql("INSERT INTO PRODUTOS (ID_PESSOA, NOME, QUANT, PRECO_ANT, PRECO_ATU, OBS, IMG_PROD) VALUES(?, ?, ?, ?, ?, ?, ?)", [userId, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, img], (_, rs) => {
-          console.log(`Novo produto salvo: ${rs.insertId}`);
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+  function saveProduto(produto) {
+    db.transaction(tx => {
+        tx.executeSql("INSERT INTO produtos (nome, quant, preco_ant, preco_atu, obs) VALUES (?, ?, ?, ?, ?)", [produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs], (_, rs) => {
+          console.log(`Nova produto salvo: ${rs.insertId}`);
           recuperaProdutos();
-        });
-      }); 
-    }
-  
-    function removeProduto(id) {
-      db.transaction(tx => {
-        tx.executeSql("DELETE FROM PRODUTOS WHERE ID_PRODUT = ?", [id], (_, rs) => {
-          recuperaProdutos();
-        });
       });
-    }
-  
-    function recuperaProdutos() {
-      db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PRODUTOS ORDER BY NOME ASC", [], (_, rs) => {
-          setProdut(rs.rows._array);
-          setLoading(false);
-        });
-      });
-    }
+    });
+  }
 
-    function buscaProdutos(id) {
-      db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PRODUT = ?", [id], (_, rs) => {
-          setProdut(rs.rows._array);
-          setLoading(false);
-        });
+  function removeProduto(id) {
+    db.transaction(tx => {
+      tx.executeSql("DELETE FROM produtos WHERE id = ?", [id], (_, rs) => {
+        recuperaProdutos();
       });
-    }  
+    });
+  }
 
-    useEffect(() => {
-      recuperaProdutos();
-    }, []);
+  function recuperaProdutos() {
+    db.transaction(tx => {
+      tx.executeSql("SELECT * FROM produtos ORDER BY nome ASC", [], (_, rs) => {
+        setProdutos(rs.rows._array);
+        setLoading(false);
+      });
+    });
+  }
+
+  useEffect(() => {
+    recuperaProdutos();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <FormCadastro onSaveProduto={saveProduto} />
+    </View>
+  );
   
-    return (
-      <View style={styles.principal}>  
-        <FormCadastro onSaveCadastro={saveProduto} />        
-      </View>
-    );
-    
-    }
+}
   
   const styles = StyleSheet.create({
 

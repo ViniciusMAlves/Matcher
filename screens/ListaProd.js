@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { StyleSheet, View, Image, ScrollView, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Image, ScrollView, ActivityIndicator, Alert } from "react-native";
 import {Button} from "react-native-elements";
 import { Provider as PaperProvider, Text, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
@@ -21,7 +21,7 @@ const EMPTY_PRODUT = {
   IMG_PROD: "",
 };
 
-function Produt(prod){
+function ProdutoItem({ produto, onRemoveProduto }) {
   const [image2, setImage2] = useState(null);
 
   useEffect(() => {
@@ -50,31 +50,66 @@ function Produt(prod){
     }
   };
 
-  return (  
-    <View>
-      <Image 
-        style={styles.stretch}      
-        source={prod.IMG_PROD}   
-      />
-      <Text>{prod.NOME}</Text>
+  
+  return (
+    <View style={styles.pessoaItem}>
+      <View style={styles.pessoaItemDados}>
+        <Text style={[styles.pessoaText, styles.pessoaTextLabel]}>Nome: <Text style={styles.pessoaText}>{produto.nome}</Text></Text>
+        <View style={styles.pessoaItemDados2}>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Quantidade: <Text style={styles.pessoaText}>{produto.quant}</Text></Text></View>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Ant: <Text style={styles.pessoaText}>{produto.preco_ant}</Text></Text></View>
+        </View>
+        <View style={styles.pessoaItemDados2}>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Atual. <Text style={styles.pessoaText}>{produto.preco_atu}</Text></Text></View>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>OBS: <Text style={styles.pessoaText}>{produto.obs}</Text></Text></View>
+        </View>
+      </View>
+      <View>
+        <Button
+          title="x"
+          color="#CC0000"
+          onPress={() => {
+            Alert.alert(
+              "Exclusão de usuário",
+              `Você confirma a exclusão do usuário ${produto.nome}?`,
+              [
+                {
+                  text: "Cancelar",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel",
+                },
+                { text: "OK", onPress: () => onRemoveProduto(produto.id) },
+              ],
+              { cancelable: false }
+            );
+          }}
+        />
+      </View>
     </View>
   );
 }
 
-export default function ListaProduto({ route, navigation}) {
-    const { userId } = route.params;
-    const [produtos, setProdut] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function ListaProduto({route, navigation}) {
+  const { userId } = route.params;
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    function recuperaProdutos() {
-      db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PESSOA = ? ORDER BY NOME ASC", [userId], (_, rs) => {
-          setProdut(rs.rows._array);
-          console.log('Busca por produtos');          
-          setLoading(false);
-        });
+  function removeProduto(id) {
+    db.transaction(tx => {
+      tx.executeSql("DELETE FROM produtos WHERE id = ?", [id], (_, rs) => {
+        recuperaProdutos();
       });
-    } 
+    });
+  }
+
+  function recuperaProdutos() {
+    db.transaction(tx => {
+      tx.executeSql("SELECT * FROM produtos ORDER BY nome ASC", [], (_, rs) => {
+        setProdutos(rs.rows._array);
+        setLoading(false);
+      });
+    });
+  }
 
     useEffect(() => {
       recuperaProdutos();
@@ -89,32 +124,30 @@ export default function ListaProduto({ route, navigation}) {
           <Ionicons name="add-circle-outline" size={40} onPress={() => navigation.navigate("CadastroProd", { userId:userId })}/>
         </Appbar.Header>
 
-        <View style={styles.principal}>     
-          <View style={styles.secundaria}>
-            <ScrollView style={{ flex: 1 }}>
-              {!loading ? (
-                <View>
-                  {produtos.map(prod => (
-                    <Produt key={prod.id} produt={prod} />
-                  ))}
-                </View>
-              ) : (
-                <View style={{ alignItems: "center", justifyContent: "center", padding: 30 }}>
-                  <ActivityIndicator size="large" color="black" />
-                </View>
-              )}
-            </ScrollView>
-          </View>
-        </View>
 
-        <View style={styles.form}>            
-            <View style={styles.containerButton}>
-              <Button title="criar catalogo" 
-                      titleStyle={{ color: 'white', fontSize:19 }}   
-                      onPress={() => navigation.navigate("CriarCatalogo")} 
-                      buttonStyle={styles.buttonLogin}
-              />
-            </View>
+      <View style={styles.form}>            
+
+          <ScrollView style={{ flex: 1, marginLeft: -14, marginRight: -14, marginBottom: -14 }}>
+            {!loading ? (
+              <View>
+                {produtos.map(produto => (
+                  <ProdutoItem key={produto.id} produto={produto} onRemoveProduto={removeProduto} />
+                ))}
+              </View>
+            ) : (
+              <View style={{ alignItems: "center", justifyContent: "center", padding: 30 }}>
+                <ActivityIndicator size="large" color="black" />
+              </View>
+            )}
+          </ScrollView>
+          
+        <View style={styles.containerButton}>
+          <Button title="criar catalogo" 
+                  titleStyle={{ color: 'white', fontSize:19 }}   
+                  onPress={() => navigation.navigate("CriarCatalogo")} 
+                  buttonStyle={styles.buttonLogin}
+          />
+        </View>
       </View>
         
     </View>
@@ -150,7 +183,7 @@ export default function ListaProduto({ route, navigation}) {
         marginBottom:40,
         marginLeft: 20,
         marginRight: 20,
-        marginTop: -240,
+        marginTop: 40,
         zIndex:100,
         height: 510,
         flexDirection: "column",
@@ -216,5 +249,34 @@ export default function ListaProduto({ route, navigation}) {
         marginBottom: -14,
         marginTop: 20,
         height:200,
+    },
+    pessoaItemDados: {
+      flex: 1,
+    },
+    pessoaItemDados2: {
+      flex: 1,
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "flex-start"
+    },
+    pessoaText: {
+      marginRight:5,
+      fontSize: 15,
+      lineHeight: 21,
+      fontWeight: "normal",
+    },
+    pessoaTextLabel: {
+      fontWeight: "bold",
+    },
+    pessoaItem: {
+      width:300,
+      flexDirection: "row",
+      paddingHorizontal: 14,
+      paddingVertical: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: "#dedede",
+    },
+    pessoaItemDados: {
+      flex: 1,
     },
   });

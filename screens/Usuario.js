@@ -67,7 +67,7 @@ export default function Usuario({ route, navigation}) {
             <View style={styles.containerImage}>
                 <Image source={{ uri: image2 }} style={{backgroundColor:"rgba(62, 170, 204, 1)", borderWidth: 1, borderColor: "rgba(62, 170, 204, 1)", borderRadius: 50, width: 100, height: 100 }} />
             </View>
-            <Text>Usuario</Text>
+            <Text>{pessoa.user}</Text>
             <View style={styles.containerButton}>
                 <Button title="produtos" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => navigation.navigate("Produto", { ProdId:1 })} buttonStyle={styles.buttonLogin}/>
             </View>
