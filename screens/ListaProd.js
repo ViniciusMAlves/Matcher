@@ -21,7 +21,7 @@ const EMPTY_PRODUT = {
   IMG_PROD: "",
 };
 
-function ProdutoItem({ produto, onRemoveProduto }) {
+function ProdutoItem({ produto, onRemoveProduto, onAltera }) {
   const [image2, setImage2] = useState(null);
 
   useEffect(() => {
@@ -54,20 +54,35 @@ function ProdutoItem({ produto, onRemoveProduto }) {
   return (
     <View style={styles.pessoaItem}>
       <View style={styles.pessoaItemDados}>
-        <Text style={[styles.pessoaText, styles.pessoaTextLabel]}>Nome: <Text style={styles.pessoaText}>{produto.nome}</Text></Text>
+        <View style={styles.Prod}>
+          <Text style={styles.TextProd}>{produto.nome}</Text>
+        </View>
+
         <View style={styles.pessoaItemDados2}>
           <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Quantidade: <Text style={styles.pessoaText}>{produto.quant}</Text></Text></View>
-          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Ant: <Text style={styles.pessoaText}>{produto.preco_ant}</Text></Text></View>
         </View>
+
         <View style={styles.pessoaItemDados2}>
-          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Atual. <Text style={styles.pessoaText}>{produto.preco_atu}</Text></Text></View>
-          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>OBS: <Text style={styles.pessoaText}>{produto.obs}</Text></Text></View>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Atual: <Text style={styles.pessoaText}>{produto.preco_atu}</Text></Text></View>
+        </View>
+
+        <View style={styles.pessoaItemDados2}>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Anterior: <Text style={styles.pessoaText}>{produto.preco_ant}</Text></Text></View>
+        </View>
+
+        <View style={styles.pessoaItemDados2}>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Observação: <Text style={styles.pessoaText}>{produto.obs}</Text></Text></View>
         </View>
       </View>
       <View>
-        <Button
-          title="x"
-          color="#CC0000"
+        <Ionicons name="reader-outline" 
+            size={40}             
+            style={styles.altera}
+            onPress={() => onAltera(produto.id)}
+          />
+        <Ionicons name="trash-outline" 
+          size={40} 
+          style={styles.lixeira}
           onPress={() => {
             Alert.alert(
               "Exclusão de usuário",
@@ -83,7 +98,7 @@ function ProdutoItem({ produto, onRemoveProduto }) {
               { cancelable: false }
             );
           }}
-        />
+        />        
       </View>
     </View>
   );
@@ -102,10 +117,15 @@ export default function ListaProduto({route, navigation}) {
     });
   }
 
+  function alteraProd(id){
+    navigation.navigate("Produto", { ProdId:id });
+  }
+
   function recuperaProdutos() {
     db.transaction(tx => {
       tx.executeSql("SELECT * FROM produtos ORDER BY nome ASC", [], (_, rs) => {
         setProdutos(rs.rows._array);
+        console.log('opa');
         setLoading(false);
       });
     });
@@ -115,23 +135,29 @@ export default function ListaProduto({route, navigation}) {
       recuperaProdutos();
     }, []);
   
-    return(   
+  return(   
 
-      <View style={styles.principal}>     
-        <Appbar.Header style={{ backgroundColor:"white"}}>
-          <Ionicons name="person-circle-outline" size={40} onPress={() => navigation.navigate("Usuario", { userId:userId })}/>         
-          <Appbar.Content title= "Lista de Produtos" titleStyle={{ fontWeight:"bold" }} />
-          <Ionicons name="add-circle-outline" size={40} onPress={() => navigation.navigate("CadastroProd", { userId:userId })}/>
-        </Appbar.Header>
+    <View style={styles.principal}>     
+      <Appbar.Header style={{ backgroundColor:"white"}}>
+        <Ionicons name="person-circle-outline" size={40} onPress={() => navigation.navigate("Usuario", { userId:userId })}/>         
+        <Appbar.Content title= "Lista de Produtos" titleStyle={{ fontWeight:"bold" }} />
+        <Ionicons name="add-circle-outline" size={40} onPress={() => navigation.navigate("CadastroProd", { userId:userId })}/>
+      </Appbar.Header>
 
-
-      <View style={styles.form}>            
+      <View style={styles.secundaria}>
+        <Image 
+            style={styles.stretch}
+            source={require('../img/logo.png')}
+        />
+      </View>
+      
+        <View style={styles.form}>            
 
           <ScrollView style={{ flex: 1, marginLeft: -14, marginRight: -14, marginBottom: -14 }}>
             {!loading ? (
               <View>
                 {produtos.map(produto => (
-                  <ProdutoItem key={produto.id} produto={produto} onRemoveProduto={removeProduto} />
+                  <ProdutoItem key={produto.id} produto={produto} onRemoveProduto={removeProduto} onAltera={alteraProd} />
                 ))}
               </View>
             ) : (
@@ -140,16 +166,17 @@ export default function ListaProduto({route, navigation}) {
               </View>
             )}
           </ScrollView>
-          
-        <View style={styles.containerButton}>
-          <Button title="criar catalogo" 
-                  titleStyle={{ color: 'white', fontSize:19 }}   
-                  onPress={() => navigation.navigate("CriarCatalogo")} 
-                  buttonStyle={styles.buttonLogin}
-          />
+
+          <View style={styles.containerButton}>
+            <Button title="criar catalogo" 
+                    titleStyle={{ color: 'white', fontSize:19 }}   
+                    onPress={() => navigation.navigate("CriarCatalogo")} 
+                    buttonStyle={styles.buttonLogin}
+            />
+          </View>
         </View>
-      </View>
-        
+     
+      
     </View>
   );
     
@@ -183,9 +210,10 @@ export default function ListaProduto({route, navigation}) {
         marginBottom:40,
         marginLeft: 20,
         marginRight: 20,
-        marginTop: 40,
+        marginTop: -240,
         zIndex:100,
         height: 510,
+        flexDirection: "row",
         flexDirection: "column",
         justifyContent: "center",
         alignItems:"center",
@@ -279,4 +307,23 @@ export default function ListaProduto({route, navigation}) {
     pessoaItemDados: {
       flex: 1,
     },
+    lixeira:{
+      color:"#CC0000",
+      marginTop: 'auto',
+      marginBottom: 'auto',
+    },
+    altera:{
+      color:"#0000FF",
+      marginTop: 'auto',
+      marginBottom: 'auto',
+    },
+    TextProd:{
+      fontWeight: "bold",      
+      fontSize: 25,
+      marginBottom:10,
+    },
+    Prod:{
+      marginLeft:'auto',
+      marginRight:'auto',
+    }
   });

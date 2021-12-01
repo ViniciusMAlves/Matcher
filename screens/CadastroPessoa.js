@@ -10,10 +10,10 @@ import openDB from "../db";
 const db = openDB();
 
 const EMPTY_PESSOA = {
-  USER: "",
-  EMAIL: "",
-  PASSWORD: "",
-  IMG_PESSOA: "",
+  user: "",
+  email: "",
+  password: "",
+  img: "",
 };
 
 function FormCadastro({onSaveCadastro}){
@@ -157,7 +157,7 @@ export default function CadastroPessoa({ navigation}) {
 
     function savePessoa(pessoa, img) {
       db.transaction(tx => { 
-        tx.executeSql("INSERT INTO PESSOAS (USER, EMAIL, PASSWORD, IMG_PESSOA) VALUES(?, ?, ?, ?)", [pessoa.user, pessoa.email, pessoa.password, img], (_, rs) => {
+        tx.executeSql("INSERT INTO pessoas (nome, email, password, img) VALUES(?, ?, ?, ?)", [pessoa.user, pessoa.email, pessoa.password, img], (_, rs) => {
           console.log(`Novo usuario salvo: ${rs.insertId}`);
           recuperaPessoa();
         });
@@ -166,7 +166,7 @@ export default function CadastroPessoa({ navigation}) {
   
     function removePessoa(id) {
       db.transaction(tx => {
-        tx.executeSql("DELETE FROM PESSOAS WHERE ID_PESSOA = ?", [id], (_, rs) => {
+        tx.executeSql("DELETE FROM pessoas WHERE id = ?", [id], (_, rs) => {
           recuperaPessoa();
         });
       });
@@ -174,7 +174,7 @@ export default function CadastroPessoa({ navigation}) {
   
     function recuperaPessoa() {
       db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PESSOAS ORDER BY USER ASC", [], (_, rs) => {
+        tx.executeSql("SELECT * FROM pessoas ORDER BY USER ASC", [], (_, rs) => {
           setPessoa(rs.rows._array);
           setLoading(false);
         });
@@ -183,7 +183,7 @@ export default function CadastroPessoa({ navigation}) {
 
     function buscaPessoa(id) {
       db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PESSOAS WHERE ID_PESSOA = ?", [id], (_, rs) => {
+        tx.executeSql("SELECT * FROM pessoas WHERE id = ?", [id], (_, rs) => {
           setPessoa(rs.rows._array);
           setLoading(false);
         });

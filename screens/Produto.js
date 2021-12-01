@@ -20,7 +20,8 @@ const EMPTY_PRODUT = {
 };
 
 function PegaProdut({ produt, onEdit }){
-  const [produto, setProdut] = useState({ ...EMPTY_PRODUT });  
+  const [produto, setProdut] = useState({ ...EMPTY_PRODUT }); 
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -171,39 +172,33 @@ function PegaProdut({ produt, onEdit }){
 
 export default function Produto({ route, navigation}) {
     const { ProdId } = route.params;
-    const { UserId } = route.params;
     const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
-    const [image, setImage] = useState(null);
 
     function alteraProduto(produto) {
       db.transaction(tx => { 
-        tx.executeSql("UPDATE PRODUTOS SET ID_PESSOA = ?, NOME = ?, QUANT = ?, PRECO_ANT = ?, PRECO_ATU = ?, OBS = ?, IMG_PROD = ? WHERE ID_PRODUT = ?", [UserId, produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod, ProdId], (_, rs) => {
+        tx.executeSql("UPDATE PRODUTOS SET NOME = ?, QUANT = ?, PRECO_ANT = ?, PRECO_ATU = ?, OBS = ?, IMG_PROD = ? WHERE ID_PRODUT = ?", [ produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod, ProdId], (_, rs) => {
           console.log(`Novo usuario salvo: ${rs.insertId}`);
           recuperaProdutos();
         });
       });
     }
 
-    function recuperaProduto() {
+    function recuperaProduto(id) {
       db.transaction(tx => {
-        tx.executeSql("SELECT * FROM PRODUTOS WHERE ID_PRODUT = ? ", [ProdId], (_, rs) => {
+        tx.executeSql("SELECT * FROM produtos WHERE id = ? ", [id], (_, rs) => {
           setProdut(rs.rows._array);
-          setLoading(false);
+          console.log(id);
         });
       });
     }
   
     useEffect(() => {
-      recuperaProduto();
+      recuperaProduto(ProdId);
     }, []);  
 
     return(
       <View style={styles.principal}>     
-          <ScrollView style={{ flex: 1 }}>
-            {produtos.map(prod => (
-              <Produt key={prod.id} produt={prod} onEdit={alteraProduto} />
-            ))}
-          </ScrollView>
+              <PegaProdut key={ProdId} produt={produtos} onEdit={alteraProduto} />
         </View>
     );
     
