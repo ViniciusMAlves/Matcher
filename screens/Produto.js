@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { StyleSheet, View, Image, Platform, ScrollView} from "react-native";
+import { StyleSheet, View, Image, Platform, ScrollView, Alert} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Button} from "react-native-elements";
 import {TextInput} from "react-native-paper";
@@ -10,13 +10,11 @@ import openDB from "../db";
 const db = openDB();
 
 const EMPTY_PRODUT = {
-  ID_PESSOA: 0,
-  NOME: "",
-  QUANT: 0,
-  PRECO_ANT: 0.0,
-  PRECO_ATU: 0.0,
-  OBS: "",
-  IMG_PROD: "",
+  nome: "", 
+  quant: 0, 
+  preco_ant: 0.00,
+  preco_atu: 0.00,
+  obs: "",
 };
 
 function PegaProdut({ produt, onEdit }){
@@ -60,9 +58,6 @@ function PegaProdut({ produt, onEdit }){
       />
     </View>
     <View style={styles.form}>
-          <View style={styles.containerImage}>
-              <Image source={{ uri: image }} style={{marginBottom: -20, width: 80, height: 80 }} />
-          </View>
           <LinearGradient 
                   colors={['#FFF', "rgba(62, 170, 204, 1)"]}
                   start={{x: 0.0, y: 0.80}} end={{x: 0.0, y: 1.0}}
@@ -94,7 +89,7 @@ function PegaProdut({ produt, onEdit }){
               underlineColor="#fff"
               style={styles.formInput}
               label="qtd"
-              onChangeText={qtd => setProdut({ ...produto, qtd})}
+              onChangeText={quant => setProdut({ ...produto, quant})}
               value={produt.quant}
           /></LinearGradient>
           <View style={styles.containerInput}>
@@ -163,7 +158,11 @@ function PegaProdut({ produt, onEdit }){
               buttonStyle={styles.formButtonImage}
           /></LinearGradient>
           <View style={styles.containerButton}>
-              <Button title="editar" titleStyle={{ color: 'white', fontSize:19 }}   onPress={() => onEdit(produto) } buttonStyle={styles.buttonLogin}/>
+              <Button title="editar" titleStyle={{ color: 'white', fontSize:19 }} buttonStyle={styles.buttonLogin}   
+              onPress={() => {
+                onEdit(produto);
+                setProdut({ ...EMPTY_PRODUT });
+                }}/>
           </View>
     </View>
   </View>
@@ -176,18 +175,17 @@ export default function Produto({ route, navigation}) {
 
     function alteraProduto(produto) {
       db.transaction(tx => { 
-        tx.executeSql("UPDATE PRODUTOS SET NOME = ?, QUANT = ?, PRECO_ANT = ?, PRECO_ATU = ?, OBS = ?, IMG_PROD = ? WHERE ID_PRODUT = ?", [ produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, produto.img_prod, ProdId], (_, rs) => {
-          console.log(`Novo usuario salvo: ${rs.insertId}`);
-          recuperaProdutos();
+        tx.executeSql("UPDATE produtos SET nome=?, quant=?, preco_ant=?, preco_atu=?, obs=? WHERE id=?;",[produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, ProdId], (_, rs) => {
+          console.log(`Produto editado`);
         });
       });
     }
 
-    function recuperaProduto(id) {
+    function recuperaProduto(ProdId) {
       db.transaction(tx => {
-        tx.executeSql("SELECT * FROM produtos WHERE id = ? ", [id], (_, rs) => {
+        tx.executeSql("SELECT * FROM produtos WHERE id = ? ", [ProdId], (_, rs) => {
           setProdut(rs.rows._array);
-          console.log(id);
+          console.log(rs.rows);
         });
       });
     }
