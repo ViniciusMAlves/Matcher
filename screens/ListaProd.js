@@ -11,12 +11,12 @@ import openDB from "../db";
 const db = openDB();
 
 const EMPTY_PRODUT = {  
-  ID_PRODUT: 0,
-  ID_PESSOA: 0,
+  ID_PRODUT: null,
+  ID_PESSOA: null,
   NOME: "",
-  QUANT: 0,
-  PRECO_ANT: 0.0,
-  PRECO_ATU: 0.0,
+  QUANT: null,
+  PRECO_ANT: null,
+  PRECO_ATU: null,
   OBS: "",
   IMG_PROD: "",
 };
@@ -63,11 +63,11 @@ function ProdutoItem({ produto, onRemoveProduto, onAltera }) {
         </View>
 
         <View style={styles.pessoaItemDados2}>
-          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Atual: <Text style={styles.pessoaText}>R$ {produto.preco_ant}</Text></Text></View>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Atual: <Text style={styles.pessoaText}>R$ {produto.preco_ant.toFixed(2)}</Text></Text></View>
         </View>
 
         <View style={styles.pessoaItemDados2}>
-          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Anterior: <Text style={styles.pessoaText}>R$ {produto.preco_ant}</Text></Text></View>
+          <View style={styles.pessoaItemDados}><Text style={[styles.pessoaText, styles.pessoaTextLabel, { marginTop: 0 }]}>Preço Anterior: <Text style={styles.pessoaText}>R$ {produto.preco_atu.toFixed(2)}</Text></Text></View>
         </View>
 
         <View style={styles.pessoaItemDados2}>
@@ -125,6 +125,7 @@ export default function ListaProduto({route, navigation}) {
     db.transaction(tx => {
       tx.executeSql("SELECT * FROM produtos ORDER BY nome ASC", [], (_, rs) => {
         setProdutos(rs.rows._array);
+        console.log('opa');
         setLoading(false);
       });
     });

@@ -11,14 +11,14 @@ const db = openDB();
 
 const EMPTY_PRODUT = {
   nome: "", 
-  quant: 0, 
-  preco_ant: 0.00,
-  preco_atu: 0.00,
+  quant: "", 
+  preco_ant: "",
+  preco_atu: "",
   obs: "",
 };
 
-function PegaProdut({ produt, onEdit }){
-  const [produto, setProdut] = useState({ ...EMPTY_PRODUT }); 
+function PegaProdut({ onEdit}){
+  const [produt, setProdut] = useState({... EMPTY_PRODUT}); 
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function PegaProdut({ produt, onEdit }){
 
     if (!result.cancelled) {
       setImage(result.uri);      
-      img => setProdut({ ...produto, img});
+      img => setProdut({ ...produt, img});
     }
   };
 
@@ -72,7 +72,7 @@ function PegaProdut({ produt, onEdit }){
               underlineColor="#fff"
               style={styles.formInput}
               label="nome"
-              onChangeText={nome => setProdut({ ...produto, nome})}
+              onChangeText={nome => setProdut({ ...produt, nome})}
               value={produt.nome}
           /></LinearGradient>
           <LinearGradient 
@@ -89,7 +89,7 @@ function PegaProdut({ produt, onEdit }){
               underlineColor="#fff"
               style={styles.formInput}
               label="qtd"
-              onChangeText={quant => setProdut({ ...produto, quant})}
+              onChangeText={quant => setProdut({ ...produt, quant})}
               value={produt.quant}
           /></LinearGradient>
           <View style={styles.containerInput}>
@@ -107,7 +107,7 @@ function PegaProdut({ produt, onEdit }){
                   underlineColor="#fff"
                   style={styles.formInput2}
                   label="preço an."
-                  onChangeText={preco_ant => setProdut({ ...produto, preco_ant})}
+                  onChangeText={preco_ant => setProdut({ ...produt, preco_ant})}
                   value={produt.preco_ant}
               /></LinearGradient>
               <LinearGradient 
@@ -124,7 +124,7 @@ function PegaProdut({ produt, onEdit }){
                   underlineColor="#fff"
                   style={styles.formInput2}
                   label="preço at."
-                  onChangeText={preco_atu => setProdut({ ...produto, preco_atu})}
+                  onChangeText={preco_atu => setProdut({ ...produt, preco_atu})}
                   value={produt.preco_atu}
               /></LinearGradient>
           </View>
@@ -142,7 +142,7 @@ function PegaProdut({ produt, onEdit }){
               underlineColor="#fff"
               style={styles.formInput}
               label="inf. adicionais"
-              onChangeText={obs => setProdut({ ...produto, obs})}
+              onChangeText={obs => setProdut({ ...produt, obs})}
               value={produt.obs}
           /></LinearGradient>
           <LinearGradient 
@@ -160,7 +160,7 @@ function PegaProdut({ produt, onEdit }){
           <View style={styles.containerButton}>
               <Button title="editar" titleStyle={{ color: 'white', fontSize:19 }} buttonStyle={styles.buttonLogin}   
               onPress={() => {
-                onEdit(produto);
+                onEdit(produt);
                 setProdut({ ...EMPTY_PRODUT });
                 }}/>
           </View>
@@ -169,15 +169,38 @@ function PegaProdut({ produt, onEdit }){
   );
 }
 
-export default function Produto({ route, navigation}) {
+export default function Produto({route, navigation, produt, produto}) {
     const { ProdId } = route.params;
-    const [produtos, setProdut] = useState({ ...EMPTY_PRODUT });  
+    const [produtos, setProdut] = useState([]);  
 
-    function alteraProduto(produto) {
+    function alteraProduto(produt) {
       db.transaction(tx => { 
-        tx.executeSql("UPDATE produtos SET nome=?, quant=?, preco_ant=?, preco_atu=?, obs=? WHERE id=?;",[produto.nome, produto.quant, produto.preco_ant, produto.preco_atu, produto.obs, ProdId], (_, rs) => {
-          console.log(`Produto editado`);
+        if (produt.nome != "" ){tx.executeSql("UPDATE produtos SET nome=? WHERE id=?;",[produt.nome, ProdId], (_, rs) => {
+          console.log(`Nome editado`);
+          console.log(produt);
         });
+        };
+
+        if (produt.quant != "" ){tx.executeSql("UPDATE produtos SET quant=? WHERE id=?;",[produt.quant, ProdId], (_, rs) => {
+          console.log(`Quantidade editado`);
+          console.log(produt);
+        });
+        };
+        if (produt.preco_ant != "" ){tx.executeSql("UPDATE produtos SET preco_ant=? WHERE id=?;",[produt.preco_ant, ProdId], (_, rs) => {
+          console.log(`Preço anterior editado`);
+          console.log(produt);
+        });
+        };
+        if (produt.preco_atu != "" ){tx.executeSql("UPDATE produtos SET preco_atu=? WHERE id=?;",[produt.preco_atu, ProdId], (_, rs) => {
+          console.log(`Preço atual editado`);
+          console.log(produt);
+        });
+        };
+        if (produt.obs != "" ){tx.executeSql("UPDATE produtos SET obs=? WHERE id=?;",[produt.obs, ProdId], (_, rs) => {
+          console.log(`Informações editado`);
+          console.log(produt);
+        });
+        };
       });
     }
 
@@ -185,7 +208,7 @@ export default function Produto({ route, navigation}) {
       db.transaction(tx => {
         tx.executeSql("SELECT * FROM produtos WHERE id = ? ", [ProdId], (_, rs) => {
           setProdut(rs.rows._array);
-          console.log(rs.rows);
+          console.log(ProdId);
         });
       });
     }
@@ -196,8 +219,10 @@ export default function Produto({ route, navigation}) {
 
     return(
       <View style={styles.principal}>     
-              <PegaProdut key={ProdId} produt={produtos} onEdit={alteraProduto} />
-        </View>
+        {produtos.map(produto => (
+          <PegaProdut key={ProdId} produt={produto} onEdit={alteraProduto} />
+        ))}
+      </View>
     );
     
   }

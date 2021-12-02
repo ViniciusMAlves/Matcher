@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-const DATABASE_NAME = "MATCHER27.sqlite";
+const DATABASE_NAME = "MATCHER48.sqlite";
 
 const SQL_CREATE_ENTRIES = [
   `CREATE TABLE IF NOT EXISTS produtos (
